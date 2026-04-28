@@ -114,11 +114,19 @@ State& Game::GetState() {
 
 // 30 fps
 void Game::Run() {
-    while (!state->QuitRequested()) {
-        state->Update(0.0f);
-        state->Render();
+    Uint32 startTime = 0;
+    float dt = 0.0f;
 
+    while (!state->QuitRequested()) {
+        startTime = SDL_GetTicks();
+
+        state->Update(dt);
+        state->Render();
         SDL_RenderPresent(renderer);
-        SDL_Delay(33);
+
+        Uint32 frameTime = SDL_GetTicks() - startTime;
+        dt = frameTime / 1000.0f;
+
+        SDL_Delay(16);
     }
 }
