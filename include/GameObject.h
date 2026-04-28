@@ -16,6 +16,8 @@ public:
 
     void AddComponent(Component* component); // composição 
 
+    std::vector<Component*>& GetComponents();
+
     Rect box;
 
 private:

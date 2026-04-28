@@ -41,3 +41,7 @@ void GameObject::Render() {
 void GameObject::AddComponent(Component* component) {
     components.emplace_back(component);
 }
+
+std::vector<Component*>& GameObject::GetComponents() {
+    return components;
+}
