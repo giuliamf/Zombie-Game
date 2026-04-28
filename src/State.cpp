@@ -11,7 +11,7 @@ State::~State() {
 }
 
 void State::LoadAssets() {
-    music.Open("Resources/audio/bgm.mp3");
+    music.Open("Resources/audio/BGM.wav");
     music.Play();
 }
 
