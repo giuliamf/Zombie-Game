@@ -1,14 +1,31 @@
 #include "State.h"
+#include "SpriteRenderer.h"
 #include <SDL2/SDL.h>
 
+// construtor
 State::State()
     : quitRequested(false)
 {
     LoadAssets();
+
+    GameObject* bg = new GameObject();
+    bg->box.pos.x = 0;
+    bg->box.pos.y = 0;
+
+    bg->AddComponent(
+        new SpriteRenderer(
+            *bg,
+            "Resources/img/background.png"
+        )
+    );
+
+    AddObject(bg);
 }
+
 
 State::~State() {
 }
+
 
 void State::LoadAssets() {
     music.Open("Resources/audio/BGM.wav");
