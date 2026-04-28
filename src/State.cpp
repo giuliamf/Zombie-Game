@@ -1,6 +1,9 @@
 #include "State.h"
 #include "SpriteRenderer.h"
 #include "Zombie.h"
+#include "Animator.h"
+#include "Animation.h"
+
 #include <SDL2/SDL.h>
 
 // construtor
@@ -9,6 +12,7 @@ State::State()
 {
     LoadAssets();
 
+    // cria obj de background 
     GameObject* bg = new GameObject();
     bg->box.pos.x = 0;
     bg->box.pos.y = 0;
@@ -22,23 +26,29 @@ State::State()
 
     AddObject(bg);
 
-    GameObject* zombie = new GameObject();
-    zombie->box.pos.x = 600;
-    zombie->box.pos.y = 450;
+    // cria obj de inimigo
+    GameObject* enemy = new GameObject();
+    enemy->box.pos.x = 600;
+    enemy->box.pos.y = 450;
 
-    zombie->AddComponent(
-        new SpriteRenderer(
-            *zombie,
-            "Resources/img/Enemy.png",
-            2, 1
-        )
+    auto* sr = new SpriteRenderer(
+        *enemy,
+        "Resources/img/Enemy.png",
+        3, // 3 colunas
+        2  // 2 linhas
     );
 
-    zombie->AddComponent(
-        new Zombie(*zombie)
-    );
+    enemy->AddComponent(sr);
 
-    AddObject(zombie);
+    auto* animator = new Animator(*enemy);
+    animator->AddAnimation("walk", Animation(0, 2, 0.2f));
+    animator->SetAnimation("walk");
+
+    enemy->AddComponent(animator);
+
+    enemy->AddComponent(new Zombie(*enemy));
+
+    AddObject(enemy);
 }
 
 
