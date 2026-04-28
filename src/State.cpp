@@ -1,35 +1,46 @@
 #include "State.h"
 #include <SDL2/SDL.h>
 
-// começa sem o request de saída
 State::State()
     : quitRequested(false)
 {
     LoadAssets();
 }
 
-// carrega os recursos e deixa pronto na memória
-void State::LoadAssets() {
-    bg.Open("Resources/img/background.png");
+State::~State() {
+}
 
-    // carrega a música e dá play em loop infinito
-    music.Open("Resources/audio/BGM.wav");
+void State::LoadAssets() {
+    music.Open("Resources/audio/bgm.mp3");
     music.Play();
 }
 
-// vira true se o jogador apertou altf4 ou no X
+void State::Start() {
+    for (auto& obj : objectArray) {
+        obj->Start();
+    }
+}
+
+void State::AddObject(GameObject* go) {
+    objectArray.emplace_back(go);
+}
+
 void State::Update(float dt) {
     if (SDL_QuitRequested()) {
         quitRequested = true;
     }
+
+    for (auto& obj : objectArray) {
+        obj->Update(dt);
+    }
 }
 
-// (x,y) = (0,0)
 void State::Render() {
-    bg.Render(0, 0);
+    for (auto& obj : objectArray) {
+        obj->Render();
+    }
 }
 
-// definir se pode fechar o jogo
 bool State::QuitRequested() {
     return quitRequested;
 }

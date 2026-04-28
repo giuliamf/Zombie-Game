@@ -2,20 +2,24 @@
 #include "Game.h"
 #include <iostream>
 
-// cria um sprite sem imagem nenhuma -> inicializa texture p evitar crash
 Sprite::Sprite()
-    : texture(nullptr), width(0), height(0)
+    : texture(nullptr),
+      width(0),
+      height(0),
+      frameCountW(1),
+      frameCountH(1),
+      currentFrame(0)
 {
 }
 
-// construtor com arquivo
-Sprite::Sprite(const std::string& file)
-    : texture(nullptr), width(0), height(0)
+Sprite::Sprite(const std::string& file, int frameCountW, int frameCountH)
+    : Sprite()
 {
+    this->frameCountW = frameCountW;
+    this->frameCountH = frameCountH;
     Open(file);
 }
 
-// destrutor
 Sprite::~Sprite() {
     if (texture != nullptr) {
         SDL_DestroyTexture(texture);
@@ -23,15 +27,12 @@ Sprite::~Sprite() {
 }
 
 void Sprite::Open(const std::string& file) {
-    // carrega a imagem acima de outra
     if (texture != nullptr) {
         SDL_DestroyTexture(texture);
         texture = nullptr;
     }
 
-    // garante acesso global controlado
     SDL_Renderer* renderer = Game::GetInstance().GetRenderer();
-
     texture = IMG_LoadTexture(renderer, file.c_str());
 
     if (texture == nullptr) {
@@ -41,17 +42,31 @@ void Sprite::Open(const std::string& file) {
         return;
     }
 
-    // descobre o tamanho da imagem
     SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-
-    SetClip(0, 0, width, height);
+    UpdateClip();
 }
 
-void Sprite::SetClip(int x, int y, int w, int h) {
-    clipRect.x = x;
-    clipRect.y = y;
-    clipRect.w = w;
-    clipRect.h = h;
+void Sprite::SetFrameCount(int frameCountW, int frameCountH) {
+    this->frameCountW = frameCountW;
+    this->frameCountH = frameCountH;
+    currentFrame = 0;
+    UpdateClip();
+}
+
+void Sprite::SetFrame(int frame) {
+    currentFrame = frame;
+    UpdateClip();
+}
+
+void Sprite::UpdateClip() {
+    int frameWidth = width / frameCountW;
+    int frameHeight = height / frameCountH;
+
+    clipRect.w = frameWidth;
+    clipRect.h = frameHeight;
+
+    clipRect.x = (currentFrame % frameCountW) * frameWidth;
+    clipRect.y = (currentFrame / frameCountW) * frameHeight;
 }
 
 void Sprite::Render(int x, int y) {
@@ -64,7 +79,6 @@ void Sprite::Render(int x, int y) {
     dstRect.w = clipRect.w;
     dstRect.h = clipRect.h;
 
-    // pega a textura, o recorte e desenha na janela
     SDL_RenderCopy(
         Game::GetInstance().GetRenderer(),
         texture,
