@@ -6,11 +6,12 @@
 class Sprite {
 public:
     Sprite();
-    Sprite(const std::string& file);
+    Sprite(const std::string& file, int frameCountW = 1, int frameCountH = 1);
     ~Sprite();
 
     void Open(const std::string& file);
-    void SetClip(int x, int y, int w, int h);
+    void SetFrame(int frame);
+    void SetFrameCount(int frameCountW, int frameCountH);
 
     void Render(int x, int y);
 
@@ -19,8 +20,15 @@ public:
     bool IsOpen();
 
 private:
-    SDL_Texture* texture;   // img carregada na gpu
+    SDL_Texture* texture;
     int width;
     int height;
-    SDL_Rect clipRect;  // "qual parte da imagem eu quero desenhar"
+
+    int frameCountW;
+    int frameCountH;
+    int currentFrame;
+
+    SDL_Rect clipRect;
+
+    void UpdateClip();
 };
