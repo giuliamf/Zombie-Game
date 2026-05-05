@@ -15,8 +15,11 @@ public:
 
     void AddAnimation(const std::string& name, Animation animation);
     void SetAnimation(const std::string& name);
+    
+    void Stop();
 
 private:
+    bool active;
     std::map<std::string, Animation> animations;
 
     SpriteRenderer* sprite;

@@ -12,7 +12,6 @@ TileMap::TileMap(GameObject& associated, const std::string& file, TileSet* tileS
       mapDepth(0),
       tileSet(tileSet)
 {
-    std::cout << "TileMap criado!" << std::endl;
     Load(file);
 }
 
@@ -29,8 +28,6 @@ void TileMap::Load(const std::string& file) {
     ss.ignore();
     ss >> mapDepth;
     ss.ignore();
-
-    std::cout << mapWidth << " x " << mapHeight << " x " << mapDepth << std::endl;
 
     tileMatrix.clear();
     tileMatrix.reserve(mapWidth * mapHeight * mapDepth);

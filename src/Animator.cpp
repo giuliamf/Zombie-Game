@@ -9,6 +9,8 @@ Animator::Animator(GameObject& associated)
       timeElapsed(0.0f),
       currentFrame(0)
 {
+    active = true;
+
     for (auto component : associated.GetComponents()) {
         sprite = dynamic_cast<SpriteRenderer*>(component);
         if (sprite != nullptr)
@@ -37,6 +39,8 @@ void Animator::SetAnimation(const std::string& name) {
 }
 
 void Animator::Update(float dt) {
+    if (!active) return;
+
     if (currentAnimation == nullptr || sprite == nullptr)
         return;
 
@@ -52,4 +56,8 @@ void Animator::Update(float dt) {
 
         sprite->sprite.SetFrame(currentFrame);
     }
+}
+
+void Animator::Stop() {
+    active = false;
 }
