@@ -7,6 +7,7 @@ TileSet::TileSet(int tileWidth, int tileHeight, const std::string& file)
 {
     columns = tileSet.GetWidth() / tileWidth;
     rows = tileSet.GetHeight() / tileHeight;
+    tileSet.SetFrameCount(columns, rows);
 }
 
 int TileSet::GetTileWidth() {
@@ -18,13 +19,6 @@ int TileSet::GetTileHeight() {
 }
 
 void TileSet::RenderTile(unsigned index, float x, float y) {
-    // converter índice para a posição na imagem
-    int tileX = index % columns;
-    int tileY = index / columns;
-
-    // selecionar o frame
-    tileSet.SetFrame(tileY * columns + tileX);
-
-    // renderizar
-    tileSet.Render(x, y);
+    tileSet.SetFrame(static_cast<int>(index));
+    tileSet.Render((int)x, (int)y);
 }

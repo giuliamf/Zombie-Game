@@ -91,8 +91,6 @@ Game::Game(const std::string& title, int width, int height)
 
 // evitar vazamento de memoria
 Game::~Game() {
-    delete state;
-
     Mix_CloseAudio();
     Mix_Quit();
 
@@ -119,6 +117,8 @@ void Game::Run() {
 
     while (!state->QuitRequested()) {
         startTime = SDL_GetTicks();
+
+        SDL_RenderClear(renderer);
 
         state->Update(dt);
         state->Render();

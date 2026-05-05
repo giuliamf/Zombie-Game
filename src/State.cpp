@@ -4,15 +4,21 @@
 #include "Animator.h"
 #include "Animation.h"
 
+#include "TileMap.h"
+#include "TileSet.h"
+
 #include <SDL2/SDL.h>
+
+#include <iostream>
 
 // construtor
 State::State()
-    : quitRequested(false)
+    : quitRequested(false),
+      mapTileSet(nullptr)
 {
     LoadAssets();
 
-    // cria obj de background 
+    // BACKGROUND
     GameObject* bg = new GameObject();
     bg->box.pos.x = 0;
     bg->box.pos.y = 0;
@@ -24,9 +30,8 @@ State::State()
         )
     );
 
-    AddObject(bg);
 
-    // cria obj de inimigo
+    // ENEMY
     GameObject* enemy = new GameObject();
     enemy->box.pos.x = 600;
     enemy->box.pos.y = 450;
@@ -34,8 +39,7 @@ State::State()
     auto* sr = new SpriteRenderer(
         *enemy,
         "Resources/img/Enemy.png",
-        3, // 3 colunas
-        2  // 2 linhas
+        3, 2
     );
 
     enemy->AddComponent(sr);
@@ -45,10 +49,33 @@ State::State()
     animator->SetAnimation("walk");
 
     enemy->AddComponent(animator);
-
     enemy->AddComponent(new Zombie(*enemy));
 
+
+    // AQUI ENTRA O MAPA
+
+    mapTileSet = std::make_unique<TileSet>(
+        64, 64,
+        "Resources/img/Tileset.png"
+    );
+
+    GameObject* tileMapObject = new GameObject();
+    tileMapObject->box.pos.x = 0;
+    tileMapObject->box.pos.y = 0;
+
+    tileMapObject->AddComponent(
+        new TileMap(
+            *tileMapObject,
+            "Resources/map/map.txt",
+            mapTileSet.get()
+        )
+    );
+
+    
+    AddObject(bg);
+    AddObject(tileMapObject);
     AddObject(enemy);
+    
 }
 
 
@@ -57,14 +84,12 @@ State::~State() {
 
 
 void State::LoadAssets() {
+    std::cout << "LoadAssets rodando" << std::endl;
     music.Open("Resources/audio/BGM.wav");
     music.Play();
 }
 
 void State::Start() {
-    for (auto& obj : objectArray) {
-        obj->Start();
-    }
 }
 
 void State::AddObject(GameObject* go) {
