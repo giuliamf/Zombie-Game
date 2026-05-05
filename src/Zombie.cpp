@@ -1,6 +1,7 @@
 #include "Zombie.h"
 #include "SpriteRenderer.h"
 #include "GameObject.h"
+#include "Animator.h"
 
 #include <iostream>
 
@@ -22,11 +23,33 @@ Zombie::Zombie(GameObject& associated)
 
 
 void Zombie::Update(float dt) {
+
+    // se já morreu, nao faz mais nada
+    if (isDead) {
+        return;
+    }
+
     deathTimer.Update(dt);
 
-    if (!isDead && deathTimer.Get() > 3.0f) {
+    if (deathTimer.Get() > 3.0f) {
         isDead = true;
 
         std::cout << "Zombie morreu!" << std::endl;
+
+
+        for (auto comp : associated.GetComponents()) {
+
+            // parar Animator corretamente
+            Animator* anim = dynamic_cast<Animator*>(comp);
+            if (anim != nullptr) {
+                anim->Stop(); 
+            }
+
+            // mudar sprite
+            SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
+            if (sr != nullptr) {
+                sr->sprite.SetFrame(5);
+            }
+        }
     }
 }
