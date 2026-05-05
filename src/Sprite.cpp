@@ -58,6 +58,13 @@ void Sprite::SetFrame(int frame) {
     UpdateClip();
 }
 
+void Sprite::SetClip(int x, int y, int w, int h) {
+    clipRect.x = x;
+    clipRect.y = y;
+    clipRect.w = w;
+    clipRect.h = h;
+}
+
 void Sprite::UpdateClip() {
     int frameWidth = width / frameCountW;
     int frameHeight = height / frameCountH;
