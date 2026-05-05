@@ -3,6 +3,7 @@
 #include "Zombie.h"
 #include "Animator.h"
 #include "Animation.h"
+#include "Camera.h"
 
 #include "TileMap.h"
 #include "TileSet.h"
@@ -96,6 +97,13 @@ void State::AddObject(GameObject* go) {
 }
 
 void State::Update(float dt) {
+    Camera::Update(dt);
+
+
+    if (SDL_QuitRequested()) {
+        quitRequested = true;
+    }
+
 
     for (auto& obj : objectArray) {
         obj->Update(dt);

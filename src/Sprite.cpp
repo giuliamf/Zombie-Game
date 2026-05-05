@@ -1,5 +1,7 @@
 #include "Sprite.h"
 #include "Game.h"
+#include "Camera.h"
+
 #include <iostream>
 
 Sprite::Sprite()
@@ -81,8 +83,10 @@ void Sprite::Render(int x, int y) {
         return;
 
     SDL_Rect dstRect;
-    dstRect.x = x;
-    dstRect.y = y;
+    
+    dstRect.x = x - Camera::pos.x; 
+    dstRect.y = y - Camera::pos.y;
+
     dstRect.w = clipRect.w;
     dstRect.h = clipRect.h;
 
