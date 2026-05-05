@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "InputManager.h"
+
 #include <iostream>
 
 // variável estática 
@@ -115,10 +117,12 @@ void Game::Run() {
     Uint32 startTime = 0;
     float dt = 0.0f;
 
-    while (!state->QuitRequested()) {
+    while (!InputManager::GetInstance().QuitRequested()) {
         startTime = SDL_GetTicks();
 
         SDL_RenderClear(renderer);
+
+        InputManager::GetInstance().Update();
 
         state->Update(dt);
         state->Render();

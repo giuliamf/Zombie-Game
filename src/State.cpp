@@ -97,9 +97,6 @@ void State::AddObject(GameObject* go) {
 }
 
 void State::Update(float dt) {
-    if (SDL_QuitRequested()) {
-        quitRequested = true;
-    }
 
     for (auto& obj : objectArray) {
         obj->Update(dt);
