@@ -2,6 +2,7 @@
 #include "SpriteRenderer.h"
 #include "GameObject.h"
 #include "Animator.h"
+#include "InputManager.h"
 
 #include <iostream>
 
@@ -28,6 +29,31 @@ void Zombie::Update(float dt) {
     if (isDead) {
         return;
     }
+
+    // matar com tecla (espaço)
+    if (InputManager::GetInstance().KeyPress(SDLK_SPACE)) {
+        isDead = true;
+
+        std::cout << "Zombie morreu por tecla!" << std::endl;
+
+        for (auto comp : associated.GetComponents()) {
+
+            // parar animator
+            Animator* anim = dynamic_cast<Animator*>(comp);
+            if (anim != nullptr) {
+                anim->Stop();
+            }
+
+            // mudar sprite
+            SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
+            if (sr != nullptr) {
+                sr->sprite.SetFrame(5);
+            }
+        }
+
+        return; // impede qualquer lógica depois
+    }
+
 
     deathTimer.Update(dt);
 
