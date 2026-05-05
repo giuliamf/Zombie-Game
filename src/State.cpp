@@ -84,7 +84,6 @@ State::~State() {
 
 
 void State::LoadAssets() {
-    std::cout << "LoadAssets rodando" << std::endl;
     music.Open("Resources/audio/BGM.wav");
     music.Play();
 }

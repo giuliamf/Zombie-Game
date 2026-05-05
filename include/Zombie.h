@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Timer.h"
 
 class SpriteRenderer;
 
@@ -13,4 +14,7 @@ public:
 private:
     float lifeTime;
     SpriteRenderer* sprite;
+
+    Timer deathTimer;
+    bool isDead;
 };
