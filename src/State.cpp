@@ -15,7 +15,8 @@
 // construtor
 State::State()
     : quitRequested(false),
-      mapTileSet(nullptr)
+      mapTileSet(nullptr),
+      started(false)
 {
     LoadAssets();
 
@@ -72,7 +73,6 @@ State::State()
         )
     );
 
-    
     AddObject(bg);
     AddObject(tileMapObject);
     AddObject(enemy);
@@ -90,10 +90,27 @@ void State::LoadAssets() {
 }
 
 void State::Start() {
+
+    for (auto& obj : objectArray) {
+        obj->Start();
+    }
+
+    started = true;
 }
 
-void State::AddObject(GameObject* go) {
-    objectArray.emplace_back(go);
+
+std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
+
+    std::shared_ptr<GameObject> ptr(go);
+
+    objectArray.push_back(ptr);
+
+    // se o jogo já começou, chamar start imediatamente
+    if (started) {
+        ptr->Start();
+    }
+
+    return std::weak_ptr<GameObject>(ptr);
 }
 
 void State::Update(float dt) {

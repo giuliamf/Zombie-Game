@@ -18,12 +18,15 @@ public:
 
     bool QuitRequested();
 
-    void AddObject(GameObject* go);
+    std::weak_ptr<GameObject> AddObject(GameObject* go);
+    
 
 private:
-    std::vector<std::unique_ptr<GameObject>> objectArray;
+    std::vector<std::shared_ptr<GameObject>> objectArray;
     Music music;
     bool quitRequested;
 
     std::unique_ptr<TileSet> mapTileSet;
+
+    bool started;
 };
