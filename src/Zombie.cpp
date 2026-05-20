@@ -13,12 +13,6 @@ Zombie::Zombie(GameObject& associated)
 {
     isDead = false;
 
-    for (auto component : associated.GetComponents()) {
-        sprite = dynamic_cast<SpriteRenderer*>(component);
-        if (sprite != nullptr) {
-            break;
-        }
-    }
 
 }
 
@@ -35,6 +29,8 @@ void Zombie::Update(float dt) {
         isDead = true;
 
         std::cout << "Zombie morreu por tecla!" << std::endl;
+
+        if (sprite == nullptr) return;
 
         for (auto comp : associated.GetComponents()) {
 
@@ -61,7 +57,7 @@ void Zombie::Update(float dt) {
         isDead = true;
 
         std::cout << "Zombie morreu!" << std::endl;
-
+        if (sprite == nullptr) return;
 
         for (auto comp : associated.GetComponents()) {
 
@@ -76,6 +72,15 @@ void Zombie::Update(float dt) {
             if (sr != nullptr) {
                 sr->sprite.SetFrame(5);
             }
+        }
+    }
+}
+
+void Zombie::Start() {
+    for (auto component : associated.GetComponents()) {
+        sprite = dynamic_cast<SpriteRenderer*>(component);
+        if (sprite != nullptr) {
+            break;
         }
     }
 }

@@ -93,6 +93,7 @@ Game::Game(const std::string& title, int width, int height)
 
 // evitar vazamento de memoria
 Game::~Game() {
+    delete state;   
     Mix_CloseAudio();
     Mix_Quit();
 

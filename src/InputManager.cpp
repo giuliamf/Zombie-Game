@@ -5,10 +5,11 @@ InputManager& InputManager::GetInstance() {
     return instance;
 }
 
-InputManager::InputManager() : quitRequested(false) {}
+InputManager::InputManager() : quitRequested(false), mouseX(0), mouseY(0) {}
 
 void InputManager::Update() {
     SDL_Event event;
+    SDL_GetMouseState(&mouseX, &mouseY);
 
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
@@ -39,4 +40,12 @@ bool InputManager::KeyRelease(int key) {
 
 bool InputManager::QuitRequested() {
     return quitRequested;
+}
+
+int InputManager::GetMouseX() const {
+    return mouseX;
+}
+
+int InputManager::GetMouseY() const {
+    return mouseY;
 }

@@ -19,6 +19,8 @@ public:
     bool QuitRequested();
 
     std::weak_ptr<GameObject> AddObject(GameObject* go);
+    std::weak_ptr<GameObject> GetObjectPtr(GameObject* go);
+
     
 
 private:

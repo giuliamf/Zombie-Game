@@ -20,6 +20,8 @@ public:
 
     Rect box;
 
+    double angleDeg;
+
 private:
     std::vector<Component*> components; // lista dinâmica de componentes
     bool started;

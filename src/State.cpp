@@ -50,11 +50,10 @@ State::State()
 
     auto* animator = new Animator(*enemy);
     animator->AddAnimation("walk", Animation(0, 2, 0.2f));
-    animator->SetAnimation("walk");
-
+    
     enemy->AddComponent(animator);
     enemy->AddComponent(new Zombie(*enemy));
-
+    animator->SetAnimation("walk");
 
     // AQUI ENTRA O MAPA
 
@@ -94,11 +93,12 @@ State::State()
 
     Animator* playerAnimator = new Animator(*player);
     playerAnimator->AddAnimation("walk", Animation(0, 2, 0.2f));
-    playerAnimator->SetAnimation("walk");
 
     player->AddComponent(playerAnimator);
     player->AddComponent(new Character(*player));
     player->AddComponent(new PlayerController(*player));
+
+    playerAnimator->SetAnimation("walk");
 
     AddObject(bg);
     AddObject(tileMapObject);
@@ -118,11 +118,9 @@ void State::LoadAssets() {
 }
 
 void State::Start() {
-
-    for (auto& obj : objectArray) {
-        obj->Start();
+    for (size_t i = 0; i < objectArray.size(); i++) {
+        objectArray[i]->Start();
     }
-
     started = true;
 }
 
@@ -179,4 +177,16 @@ void State::Render() {
 
 bool State::QuitRequested() {
     return quitRequested;
+}
+
+std::weak_ptr<GameObject> State::GetObjectPtr(GameObject* go) {
+
+    for (auto& obj : objectArray) {
+
+        if (obj.get() == go) {
+            return std::weak_ptr<GameObject>(obj);
+        }
+    }
+
+    return std::weak_ptr<GameObject>();
 }

@@ -2,7 +2,7 @@
 #include "Component.h"
 
 GameObject::GameObject()
-    : box(), started(false)
+    : box(), started(false), angleDeg(0)
 {
 }
 

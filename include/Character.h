@@ -18,4 +18,5 @@ private:
     Vec2 speed;
     float linearSpeed;
     int hp;
+    std::weak_ptr<GameObject> gun;
 };

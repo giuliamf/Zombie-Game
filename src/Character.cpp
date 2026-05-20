@@ -1,5 +1,9 @@
 #include "Character.h"
 #include "GameObject.h"
+#include "Gun.h"
+#include "SpriteRenderer.h"
+#include "Game.h"
+#include "State.h"
 
 Character::Character(GameObject& associated)
     : Component(associated),
@@ -10,7 +14,37 @@ Character::Character(GameObject& associated)
 }
 
 void Character::Start() {
+
+    GameObject* gunObject = new GameObject();
+
+    // posição inicial (vai ser ajustada no Update da Gun)
+    gunObject->box.pos.x = associated.box.pos.x;
+    gunObject->box.pos.y = associated.box.pos.y;
+
+    // sprite da arma
+    gunObject->AddComponent(
+        new SpriteRenderer(
+            *gunObject,
+            "Resources/img/Gun.png",
+            3, 2
+        )
+    );
+
+    /** pegar referência segura do player
+    std::weak_ptr<GameObject> characterPtr =
+        Game::GetInstance().GetState().GetObjectPtr(&associated); */
+
+    
+    // criar componente Gun
+    Gun* gunComp = new Gun(*gunObject, std::weak_ptr<GameObject>());    
+    //Gun* gunComp = new Gun(*gunObject, characterPtr);
+
+    gunObject->AddComponent(gunComp);
+
+    // adicionar ao State e guardar referência
+    gun = Game::GetInstance().GetState().AddObject(gunObject);
 }
+
 
 void Character::Update(float dt) {
 
