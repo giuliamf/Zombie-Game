@@ -25,7 +25,7 @@ void Gun::Start() {
 void Gun::Update(float dt) {
 
     // pega o Character
-    
+
     if (character.expired()) {
         return;
     }
@@ -37,10 +37,23 @@ void Gun::Update(float dt) {
     }
 
     // posiciona a arma no centro do player
-    //associated.box.pos.x = characterPtr->box.pos.x;
-    //associated.box.pos.y = characterPtr->box.pos.y;
-    associated.box.pos.x = associated.box.pos.x;
-    associated.box.pos.y = associated.box.pos.y;
+    float centerX = characterPtr->box.pos.x + characterPtr->box.size.x / 2;
+    float centerY = characterPtr->box.pos.y + characterPtr->box.size.y / 2;
+    
+    associated.box.pos.x = centerX;
+    associated.box.pos.y = centerY - associated.box.size.y * 0.5f;
+
+    float offset = 40.0f; // distância da arma
+    
+    
+    // posição diretamente na frente (sem centralizar depois)
+    associated.box.pos.x = centerX + cos(angle * M_PI / 180.0f) * offset;
+    associated.box.pos.y = centerY + sin(angle * M_PI / 180.0f) * offset;
+
+    // ajustar para desenhar centralizado
+    associated.box.pos.x -= associated.box.size.x / 2;
+    associated.box.pos.y -= associated.box.size.y / 2;
+
 
 
     // pegar posição do mouse

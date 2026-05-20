@@ -17,6 +17,9 @@ void Character::Start() {
 
     GameObject* gunObject = new GameObject();
 
+    gunObject->box.size.x = 32; // ajustar direito dps
+    gunObject->box.size.y = 32;
+
     // posição inicial (vai ser ajustada no Update da Gun)
     gunObject->box.pos.x = associated.box.pos.x;
     gunObject->box.pos.y = associated.box.pos.y;
@@ -36,8 +39,10 @@ void Character::Start() {
 
     
     // criar componente Gun
-    Gun* gunComp = new Gun(*gunObject, std::weak_ptr<GameObject>());    
-    //Gun* gunComp = new Gun(*gunObject, characterPtr);
+    std::weak_ptr<GameObject> characterPtr =
+        Game::GetInstance().GetState().GetObjectPtr(&associated);
+
+    Gun* gunComp = new Gun(*gunObject, characterPtr);
 
     gunObject->AddComponent(gunComp);
 
