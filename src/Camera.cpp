@@ -4,7 +4,7 @@
 Vec2 Camera::pos(0, 0);
 
 void Camera::Update(float dt) {
-    int speed = 300;
+    int speed = 2000;
 
     if (InputManager::GetInstance().IsKeyDown(SDLK_w)) {
         pos.y -= speed * dt;

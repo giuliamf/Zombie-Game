@@ -4,6 +4,8 @@
 #include "Animator.h"
 #include "Animation.h"
 #include "Camera.h"
+#include "Character.h" 
+
 
 #include "TileMap.h"
 #include "TileSet.h"
@@ -72,6 +74,16 @@ State::State()
             mapTileSet.get()
         )
     );
+
+    GameObject* player = new GameObject();
+
+    player->box.pos.x = 600;
+    player->box.pos.y = 600;
+
+    player->AddComponent(new Character(*player));
+
+    AddObject(player);
+
 
     AddObject(bg);
     AddObject(tileMapObject);
