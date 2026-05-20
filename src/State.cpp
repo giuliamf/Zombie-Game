@@ -36,8 +36,9 @@ State::State()
 
     // ENEMY
     GameObject* enemy = new GameObject();
-    enemy->box.pos.x = 600;
-    enemy->box.pos.y = 450;
+    
+    enemy->box.pos.x = 1400;
+    enemy->box.pos.y = 1300;
 
     auto* sr = new SpriteRenderer(
         *enemy,
@@ -74,43 +75,34 @@ State::State()
         )
     );
 
+    // CRIANDO O PLAYER
     GameObject* player = new GameObject();
 
-    player->box.pos.x = Camera::pos.x + 100;
-    player->box.pos.y = Camera::pos.y + 100;
+    player->box.pos.x = 1280;
+    player->box.pos.y = 1280;
 
-    //player->box.pos.x = Camera::pos.x + 600;
-    //player->box.pos.y = Camera::pos.y + 450;
     player->box.size.x = 64;
     player->box.size.y = 64;
-
-    std::cout << "PLAYER CRIADO" << std::endl;
 
     player->AddComponent(
         new SpriteRenderer(
             *player,
-            "Resources/img/Enemy.png",
-            3, 2
+            "Resources/img/Player.png",
+            3, 4
         )
     );
 
-    // ANIMAÇÃO
     Animator* playerAnimator = new Animator(*player);
     playerAnimator->AddAnimation("walk", Animation(0, 2, 0.2f));
     playerAnimator->SetAnimation("walk");
 
     player->AddComponent(playerAnimator);
-
-    // CHARACTER
     player->AddComponent(new Character(*player));
-
-    // CONTROLLER
     player->AddComponent(new PlayerController(*player));
 
-    AddObject(player);
-    std::cout << "PLAYER ADICIONADO" << std::endl;
     AddObject(bg);
     AddObject(tileMapObject);
+    AddObject(player);
     AddObject(enemy);
     
 }
@@ -150,8 +142,7 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
 }
 
 void State::Update(float dt) {
-    Camera::Update(dt);
-
+    //Camera::Update(dt);
 
     if (SDL_QuitRequested()) {
         quitRequested = true;
@@ -161,6 +152,23 @@ void State::Update(float dt) {
     for (auto& obj : objectArray) {
         obj->Update(dt);
     }
+
+    // buscar o player (Character)
+    for (auto& obj : objectArray) {
+        for (auto comp : obj->GetComponents()) {
+
+            Character* character = dynamic_cast<Character*>(comp);
+
+            if (character != nullptr) {
+
+                // centralizar câmera no player
+                Camera::pos.x = obj->box.pos.x - 600;
+                Camera::pos.y = obj->box.pos.y - 450;
+
+                return;
+            }
+        }
+}
 }
 
 void State::Render() {

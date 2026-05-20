@@ -98,6 +98,26 @@ void Sprite::Render(int x, int y) {
     );
 }
 
+/*** apagar:
+void Sprite::Render(int x, int y) {
+
+    SDL_Rect dstRect;
+
+    dstRect.x = 200;
+    dstRect.y = 200;
+
+    dstRect.w = 64;
+    dstRect.h = 64;
+
+    SDL_RenderCopy(
+        Game::GetInstance().GetRenderer(),
+        texture,
+        &clipRect,
+        &dstRect
+    );
+}
+ até aqui. */
+
 int Sprite::GetWidth() {
     return width;
 }

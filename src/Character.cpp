@@ -4,7 +4,7 @@
 Character::Character(GameObject& associated)
     : Component(associated),
       speed(0, 0),
-      linearSpeed(200),
+      linearSpeed(800), // trocar para 300, pois 800 é para testar o mapa
       hp(100)
 {
 }
