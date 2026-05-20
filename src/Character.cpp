@@ -19,4 +19,9 @@ void Character::Update(float dt) {
 }
 
 void Character::Render() {
-};
+}
+
+void Character::SetSpeed(Vec2 dir) {
+    speed.x = dir.x * linearSpeed;
+    speed.y = dir.y * linearSpeed;
+}

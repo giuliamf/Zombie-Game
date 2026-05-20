@@ -1,6 +1,8 @@
 #include "SpriteRenderer.h"
 #include "GameObject.h"
 
+#include <iostream>
+
 SpriteRenderer::SpriteRenderer(GameObject& associated, const std::string& file, int frameCountW, int frameCountH)
     : Component(associated),
       sprite(file, frameCountW, frameCountH)

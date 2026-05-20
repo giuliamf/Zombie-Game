@@ -5,8 +5,7 @@
 #include "Animation.h"
 #include "Camera.h"
 #include "Character.h" 
-
-
+#include "PlayerController.h"
 #include "TileMap.h"
 #include "TileSet.h"
 
@@ -77,14 +76,39 @@ State::State()
 
     GameObject* player = new GameObject();
 
-    player->box.pos.x = 600;
-    player->box.pos.y = 600;
+    player->box.pos.x = Camera::pos.x + 100;
+    player->box.pos.y = Camera::pos.y + 100;
 
+    //player->box.pos.x = Camera::pos.x + 600;
+    //player->box.pos.y = Camera::pos.y + 450;
+    player->box.size.x = 64;
+    player->box.size.y = 64;
+
+    std::cout << "PLAYER CRIADO" << std::endl;
+
+    player->AddComponent(
+        new SpriteRenderer(
+            *player,
+            "Resources/img/Enemy.png",
+            3, 2
+        )
+    );
+
+    // ANIMAÇÃO
+    Animator* playerAnimator = new Animator(*player);
+    playerAnimator->AddAnimation("walk", Animation(0, 2, 0.2f));
+    playerAnimator->SetAnimation("walk");
+
+    player->AddComponent(playerAnimator);
+
+    // CHARACTER
     player->AddComponent(new Character(*player));
 
+    // CONTROLLER
+    player->AddComponent(new PlayerController(*player));
+
     AddObject(player);
-
-
+    std::cout << "PLAYER ADICIONADO" << std::endl;
     AddObject(bg);
     AddObject(tileMapObject);
     AddObject(enemy);

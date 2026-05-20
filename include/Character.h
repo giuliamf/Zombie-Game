@@ -12,6 +12,7 @@ public:
     void Start() override;
     void Update(float dt) override;
     void Render() override;
+    void SetSpeed(Vec2 dir);
 
 private:
     Vec2 speed;
