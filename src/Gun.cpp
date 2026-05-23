@@ -45,7 +45,7 @@ void Gun::Update(float dt) {
 
     // 4. calcular centro do player
     float centerX = characterPtr->box.pos.x + characterPtr->box.size.x / 2;
-    float centerY = characterPtr->box.pos.y + characterPtr->box.size.y * 0.6f;
+    float centerY = characterPtr->box.pos.y + characterPtr->box.size.y * 0.8f;
 
     // 5. calcular direção (ângulo)
     float dx = mouseX - centerX;
