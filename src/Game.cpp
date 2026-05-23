@@ -93,6 +93,7 @@ Game::Game(const std::string& title, int width, int height)
 
 // evitar vazamento de memoria
 Game::~Game() {
+    delete state;   
     Mix_CloseAudio();
     Mix_Quit();
 
@@ -116,7 +117,8 @@ State& Game::GetState() {
 void Game::Run() {
     Uint32 startTime = 0;
     float dt = 0.0f;
-
+    
+    state->Start();
     while (!InputManager::GetInstance().QuitRequested()) {
         startTime = SDL_GetTicks();
 

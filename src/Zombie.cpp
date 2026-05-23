@@ -12,14 +12,6 @@ Zombie::Zombie(GameObject& associated)
       sprite(nullptr)
 {
     isDead = false;
-
-    for (auto component : associated.GetComponents()) {
-        sprite = dynamic_cast<SpriteRenderer*>(component);
-        if (sprite != nullptr) {
-            break;
-        }
-    }
-
 }
 
 
@@ -27,6 +19,10 @@ void Zombie::Update(float dt) {
 
     // se já morreu, nao faz mais nada
     if (isDead) {
+        deathTimer.Update(dt);
+        if (deathTimer.Get() > 2.0f) {
+            associated.RequestDelete();
+        }
         return;
     }
 
@@ -35,6 +31,8 @@ void Zombie::Update(float dt) {
         isDead = true;
 
         std::cout << "Zombie morreu por tecla!" << std::endl;
+
+        if (sprite == nullptr) return;
 
         for (auto comp : associated.GetComponents()) {
 
@@ -61,7 +59,7 @@ void Zombie::Update(float dt) {
         isDead = true;
 
         std::cout << "Zombie morreu!" << std::endl;
-
+        if (sprite == nullptr) return;
 
         for (auto comp : associated.GetComponents()) {
 
@@ -78,4 +76,36 @@ void Zombie::Update(float dt) {
             }
         }
     }
+}
+
+void Zombie::Start() {
+    for (auto component : associated.GetComponents()) {
+        sprite = dynamic_cast<SpriteRenderer*>(component);
+        if (sprite != nullptr) {
+            break;
+        }
+    }
+}
+
+void Zombie::NotifyHit() {
+    if (isDead) return;  // Já está morto
+    
+    isDead = true;
+    std::cout << "Zombie morreu por bala!" << std::endl;
+    
+    // Parar animação e mostrar frame de morte
+    for (auto comp : associated.GetComponents()) {
+        Animator* anim = dynamic_cast<Animator*>(comp);
+        if (anim != nullptr) {
+            anim->Stop();
+        }
+        
+        SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
+        if (sr != nullptr) {
+            sr->sprite.SetFrame(5);  // frame de morte
+        }
+    }
+    
+    // remover dps de 2 segundos
+    deathTimer.Restart();
 }

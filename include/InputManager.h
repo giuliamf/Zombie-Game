@@ -15,8 +15,20 @@ public:
 
     bool QuitRequested();
 
+    int GetMouseX() const;
+    int GetMouseY() const;
+
+    bool IsMouseDown(int button);
+
 private:
     InputManager();
     std::unordered_map<int, bool> keyState;
     bool quitRequested;
+
+    int mouseX;
+    int mouseY;
+
+    bool mouseState[6];
+    bool mouseUpdate[6];
+
 };

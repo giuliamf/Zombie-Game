@@ -16,6 +16,8 @@ public:
     void AddAnimation(const std::string& name, Animation animation);
     void SetAnimation(const std::string& name);
     
+    void Start() override;
+
     void Stop();
 
 private:

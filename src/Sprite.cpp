@@ -78,23 +78,27 @@ void Sprite::UpdateClip() {
     clipRect.y = (currentFrame / frameCountW) * frameHeight;
 }
 
-void Sprite::Render(int x, int y) {
-    if (texture == nullptr)
+void Sprite::Render(int x, int y, double angle) {
+
+    if (texture == nullptr) {
         return;
+    }
 
     SDL_Rect dstRect;
-    
-    dstRect.x = x - Camera::pos.x; 
+
+    dstRect.x = x - Camera::pos.x;
     dstRect.y = y - Camera::pos.y;
+    dstRect.w = width / frameCountW;
+    dstRect.h = height / frameCountH;
 
-    dstRect.w = clipRect.w;
-    dstRect.h = clipRect.h;
-
-    SDL_RenderCopy(
+    SDL_RenderCopyEx(
         Game::GetInstance().GetRenderer(),
         texture,
         &clipRect,
-        &dstRect
+        &dstRect,
+        angle,
+        nullptr,
+        SDL_FLIP_NONE
     );
 }
 
