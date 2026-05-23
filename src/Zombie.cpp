@@ -12,8 +12,6 @@ Zombie::Zombie(GameObject& associated)
       sprite(nullptr)
 {
     isDead = false;
-
-
 }
 
 
@@ -21,6 +19,10 @@ void Zombie::Update(float dt) {
 
     // se já morreu, nao faz mais nada
     if (isDead) {
+        deathTimer.Update(dt);
+        if (deathTimer.Get() > 2.0f) {
+            associated.RequestDelete();
+        }
         return;
     }
 

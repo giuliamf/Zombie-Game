@@ -38,7 +38,7 @@ State::State()
     // ENEMY
     GameObject* enemy = new GameObject();
     
-    enemy->box.pos.x = 1400;
+    enemy->box.pos.x = 1800;
     enemy->box.pos.y = 1300;
 
     enemy->box.size.x = 72;
@@ -82,10 +82,10 @@ State::State()
     GameObject* player = new GameObject();
 
     player->box.pos.x = 1280;
-    player->box.pos.y = 1280;
+    player->box.pos.y = 1300;
 
-    player->box.size.x = 64;
-    player->box.size.y = 64;
+    player->box.size.x = 72;
+    player->box.size.y = 72;
 
     player->AddComponent(
         new SpriteRenderer(

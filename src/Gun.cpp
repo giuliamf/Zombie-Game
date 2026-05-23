@@ -96,7 +96,7 @@ void Gun::Update(float dt) {
                     )
                 );
 
-        Bullet* bullet = new Bullet(*bulletGO, angle, 500.0f, 800.0f);
+        Bullet* bullet = new Bullet(*bulletGO, angle, 2500.0f, 800.0f);
 
         bulletGO->AddComponent(bullet);
 
