@@ -17,7 +17,7 @@ public:
     void SetFrameCount(int frameCountW, int frameCountH);
     void SetClip(int x, int y, int w, int h);
 
-    void Render(int x, int y);
+    void Render(int x, int y, double angle = 0.0);
 
     int GetWidth();
     int GetHeight();

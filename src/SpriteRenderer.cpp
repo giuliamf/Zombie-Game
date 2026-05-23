@@ -12,6 +12,7 @@ SpriteRenderer::SpriteRenderer(GameObject& associated, const std::string& file, 
 void SpriteRenderer::Render() {
     sprite.Render(
         associated.box.pos.x,
-        associated.box.pos.y
+        associated.box.pos.y,
+        associated.angleDeg
     );
 }
