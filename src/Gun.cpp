@@ -3,12 +3,16 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "SpriteRenderer.h"
+#include "Bullet.h"
+#include "Game.h"
+#include "State.h"
 #include <cmath>
 
 Gun::Gun(GameObject& associated, std::weak_ptr<GameObject> character)
     : Component(associated),
       character(character),
-      angle(0.0f)
+      angle(0.0f),
+      cooldownTime(0.1f)
 {
 }
 
@@ -23,6 +27,7 @@ void Gun::Start() {
 }
 
 void Gun::Update(float dt) {
+    cooldownTimer.Update(dt);
 
     // 1. pegar referência do player
     if (character.expired()) {
@@ -66,6 +71,38 @@ void Gun::Update(float dt) {
 
     // 9. salvar ângulo para renderização
     associated.angleDeg = angle;
+
+    // 10. atirar se o mouse estiver pressionado
+    if (InputManager::GetInstance().IsMouseDown(SDL_BUTTON_LEFT) && cooldownTimer.Get() >= cooldownTime) {
+
+        cooldownTimer.Restart();
+
+        GameObject* bulletGO = new GameObject();
+
+                bulletGO->box.pos.x = associated.box.pos.x;
+                bulletGO->box.pos.y = associated.box.pos.y;
+
+                bulletGO->box.pos.x += cos(angle * M_PI / 180.0f) * 20;
+                bulletGO->box.pos.y += sin(angle * M_PI / 180.0f) * 20;
+
+                bulletGO->box.size.x = 20;
+                bulletGO->box.size.y = 20;
+
+                bulletGO->AddComponent(
+                    new SpriteRenderer(
+                        *bulletGO,
+                        "Resources/img/Bullet.png",
+                        1, 1
+                    )
+                );
+
+        Bullet* bullet = new Bullet(*bulletGO, angle, 500.0f, 800.0f);
+
+        bulletGO->AddComponent(bullet);
+
+        Game::GetInstance().GetState().AddObject(bulletGO);
+
+    }
 }
 
 void Gun::Render() {

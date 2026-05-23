@@ -5,7 +5,16 @@ InputManager& InputManager::GetInstance() {
     return instance;
 }
 
-InputManager::InputManager() : quitRequested(false), mouseX(0), mouseY(0) {}
+InputManager::InputManager() 
+    :   quitRequested(false), 
+        mouseX(0), 
+        mouseY(0) {
+
+    for (int i = 0; i < 6; i++) {
+        mouseState[i] = false;
+        mouseUpdate[i] = false;
+    }
+}
 
 void InputManager::Update() {
     SDL_Event event;
@@ -23,8 +32,21 @@ void InputManager::Update() {
         if (event.type == SDL_KEYUP) {
             keyState[event.key.keysym.sym] = false;
         }
+
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            mouseState[event.button.button] = true;
+        }
+
+        if (event.type == SDL_MOUSEBUTTONUP) {
+            mouseState[event.button.button] = false;
+        }
     }
 }
+
+bool InputManager::IsMouseDown(int button) {
+    return mouseState[button];
+}
+
 
 bool InputManager::IsKeyDown(int key) {
     return keyState[key];

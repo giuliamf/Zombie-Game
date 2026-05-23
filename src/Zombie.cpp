@@ -84,3 +84,26 @@ void Zombie::Start() {
         }
     }
 }
+
+void Zombie::NotifyHit() {
+    if (isDead) return;  // Já está morto
+    
+    isDead = true;
+    std::cout << "Zombie morreu por bala!" << std::endl;
+    
+    // Parar animação e mostrar frame de morte
+    for (auto comp : associated.GetComponents()) {
+        Animator* anim = dynamic_cast<Animator*>(comp);
+        if (anim != nullptr) {
+            anim->Stop();
+        }
+        
+        SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
+        if (sr != nullptr) {
+            sr->sprite.SetFrame(5);  // frame de morte
+        }
+    }
+    
+    // remover dps de 2 segundos
+    deathTimer.Restart();
+}

@@ -2,7 +2,7 @@
 #include "Component.h"
 
 GameObject::GameObject()
-    : box(), started(false), angleDeg(0)
+    : box(), started(false), angleDeg(0), isDead(false)
 {
 }
 
@@ -43,4 +43,12 @@ void GameObject::AddComponent(Component* component) {
 
 std::vector<Component*>& GameObject::GetComponents() {
     return components;
+}
+
+void GameObject::RequestDelete() {
+    isDead = true;
+}
+
+bool GameObject::IsDead() const {
+    return isDead;
 }

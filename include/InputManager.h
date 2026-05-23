@@ -18,6 +18,8 @@ public:
     int GetMouseX() const;
     int GetMouseY() const;
 
+    bool IsMouseDown(int button);
+
 private:
     InputManager();
     std::unordered_map<int, bool> keyState;
@@ -25,5 +27,8 @@ private:
 
     int mouseX;
     int mouseY;
+
+    bool mouseState[6];
+    bool mouseUpdate[6];
 
 };

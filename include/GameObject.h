@@ -22,7 +22,12 @@ public:
 
     double angleDeg;
 
+    void RequestDelete();
+    bool IsDead() const;
+
+
 private:
     std::vector<Component*> components; // lista dinâmica de componentes
     bool started;
+    bool isDead;
 };

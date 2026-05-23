@@ -12,6 +12,7 @@
 #include <SDL2/SDL.h>
 
 #include <iostream>
+#include <algorithm>
 
 // construtor
 State::State()
@@ -39,6 +40,9 @@ State::State()
     
     enemy->box.pos.x = 1400;
     enemy->box.pos.y = 1300;
+
+    enemy->box.size.x = 72;
+    enemy->box.size.y = 72;
 
     auto* sr = new SpriteRenderer(
         *enemy,
@@ -131,11 +135,11 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
 
     objectArray.push_back(ptr);
 
-    // se o jogo já começou, chamar start imediatamente
+    /** se o jogo já começou, chamar start imediatamente
     if (started) {
         ptr->Start();
     }
-
+    */
     return std::weak_ptr<GameObject>(ptr);
 }
 
@@ -151,6 +155,20 @@ void State::Update(float dt) {
         obj->Update(dt);
     }
 
+
+    // remover objetos mortos
+    objectArray.erase(
+        std::remove_if(
+            objectArray.begin(),
+            objectArray.end(),
+            [](std::shared_ptr<GameObject>& obj) {
+                return obj->IsDead();
+            }
+        ),
+        objectArray.end()
+    );
+
+
     // buscar o player (Character)
     for (auto& obj : objectArray) {
         for (auto comp : obj->GetComponents()) {
@@ -163,7 +181,7 @@ void State::Update(float dt) {
                 Camera::pos.x = obj->box.pos.x - 600;
                 Camera::pos.y = obj->box.pos.y - 450;
 
-                return;
+                break;
             }
         }
 }
@@ -189,4 +207,8 @@ std::weak_ptr<GameObject> State::GetObjectPtr(GameObject* go) {
     }
 
     return std::weak_ptr<GameObject>();
+}
+
+std::vector<std::shared_ptr<GameObject>>& State::GetObjectArray() {
+    return objectArray;
 }

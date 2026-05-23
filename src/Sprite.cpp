@@ -80,6 +80,10 @@ void Sprite::UpdateClip() {
 
 void Sprite::Render(int x, int y, double angle) {
 
+    if (texture == nullptr) {
+        return;
+    }
+
     SDL_Rect dstRect;
 
     dstRect.x = x - Camera::pos.x;

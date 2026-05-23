@@ -16,4 +16,6 @@ public:
 private:
     std::weak_ptr<GameObject> character;
     float angle;
+    Timer cooldownTimer;
+    float cooldownTime;
 };
