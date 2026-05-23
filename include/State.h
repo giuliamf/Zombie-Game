@@ -32,4 +32,7 @@ private:
     std::unique_ptr<TileSet> mapTileSet;
 
     bool started;
+
+    // adicionar mais de um zumbi
+    GameObject*CreateZombie(float x, float y);
 };

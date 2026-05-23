@@ -35,29 +35,12 @@ State::State()
     );
 
 
-    // ENEMY
-    GameObject* enemy = new GameObject();
-    
-    enemy->box.pos.x = 1800;
-    enemy->box.pos.y = 1300;
-
-    enemy->box.size.x = 72;
-    enemy->box.size.y = 72;
-
-    auto* sr = new SpriteRenderer(
-        *enemy,
-        "Resources/img/Enemy.png",
-        3, 2
-    );
-
-    enemy->AddComponent(sr);
-
-    auto* animator = new Animator(*enemy);
-    animator->AddAnimation("walk", Animation(0, 2, 0.2f));
-    
-    enemy->AddComponent(animator);
-    enemy->AddComponent(new Zombie(*enemy));
-    animator->SetAnimation("walk");
+    // ENEMIES - Criar múltiplos zombies
+    GameObject* enemy1 = CreateZombie(1800, 1300);  // Direita
+    GameObject* enemy2 = CreateZombie(1280, 900);   // Acima
+    GameObject* enemy3 = CreateZombie(800, 1300);   // Esquerda
+    GameObject* enemy4 = CreateZombie(1500, 1600);  // Abaixo-direita
+    GameObject* enemy5 = CreateZombie(1000, 1000);  // Diagonal superior-esquerda
 
     // AQUI ENTRA O MAPA
 
@@ -107,12 +90,40 @@ State::State()
     AddObject(bg);
     AddObject(tileMapObject);
     AddObject(player);
-    AddObject(enemy);
+    AddObject(enemy1);
+    AddObject(enemy2);
+    AddObject(enemy3);
+    AddObject(enemy4);
+    AddObject(enemy5);
     
 }
 
 
 State::~State() {
+}
+
+GameObject* State::CreateZombie(float x, float y) {
+    GameObject* zombie = new GameObject();
+    
+    zombie->box.pos.x = x;
+    zombie->box.pos.y = y;
+    zombie->box.size.x = 72;
+    zombie->box.size.y = 72;
+    
+    auto* sr = new SpriteRenderer(
+        *zombie,
+        "Resources/img/Enemy.png",
+        3, 2
+    );
+    zombie->AddComponent(sr);
+    
+    auto* animator = new Animator(*zombie);
+    animator->AddAnimation("walk", Animation(0, 2, 0.2f));
+    zombie->AddComponent(animator);
+    zombie->AddComponent(new Zombie(*zombie));
+    animator->SetAnimation("walk");
+    
+    return zombie;
 }
 
 
