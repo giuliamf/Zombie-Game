@@ -1,12 +1,15 @@
 #pragma once
 
-#include <vector>
 #include "Rect.h"
+
+#include <vector>
+#include <string>
 
 class Component;
 
 class GameObject {
 public:
+    Component* GetComponent(std::string type);
     GameObject();
     ~GameObject();
 
@@ -24,6 +27,8 @@ public:
 
     void RequestDelete();
     bool IsDead() const;
+
+    void NotifyCollision(GameObject& other);
 
 
 private:

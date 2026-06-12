@@ -1,8 +1,10 @@
-#include "Zombie.h"
-#include "SpriteRenderer.h"
-#include "GameObject.h"
 #include "Animator.h"
+#include "Collider.h"
+#include "GameObject.h"
 #include "InputManager.h"
+#include "SpriteRenderer.h"
+#include "Zombie.h"
+
 
 #include <iostream>
 
@@ -79,6 +81,8 @@ void Zombie::Update(float dt) {
 }
 
 void Zombie::Start() {
+    associated.AddComponent(new Collider(associated));
+
     for (auto component : associated.GetComponents()) {
         sprite = dynamic_cast<SpriteRenderer*>(component);
         if (sprite != nullptr) {

@@ -1,7 +1,7 @@
-#include "PlayerController.h"
+#include "Character.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "Character.h"
+#include "PlayerController.h"
 
 PlayerController::PlayerController(GameObject& associated)
     : Component(associated)

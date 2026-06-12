@@ -1,11 +1,12 @@
-#include "Gun.h"
-#include "GameObject.h"
-#include "InputManager.h"
-#include "Camera.h"
-#include "SpriteRenderer.h"
 #include "Bullet.h"
+#include "Camera.h"
 #include "Game.h"
+#include "GameObject.h"
+#include "Gun.h"
+#include "InputManager.h"
+#include "SpriteRenderer.h"
 #include "State.h"
+
 #include <cmath>
 
 Gun::Gun(GameObject& associated, std::weak_ptr<GameObject> character)

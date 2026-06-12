@@ -1,7 +1,8 @@
 #include "Bullet.h"
-#include "GameObject.h"
+#include "Collider.h"
 #include "Collision.h"
 #include "Game.h"
+#include "GameObject.h"
 #include "State.h"
 #include "Zombie.h"
 
@@ -20,6 +21,7 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, float maxDistan
 }
 
 void Bullet::Start() {
+    associated.AddComponent(new Collider(associated));
 }
 
 void Bullet::Update(float dt) {
