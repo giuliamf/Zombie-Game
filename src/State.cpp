@@ -1,13 +1,15 @@
-#include "State.h"
-#include "SpriteRenderer.h"
-#include "Zombie.h"
-#include "Animator.h"
 #include "Animation.h"
+#include "Animator.h"
 #include "Camera.h"
-#include "Character.h" 
+#include "Character.h"
+#include "Collider.h"
+#include "Collision.h"
 #include "PlayerController.h"
+#include "SpriteRenderer.h"
+#include "State.h"
 #include "TileMap.h"
 #include "TileSet.h"
+#include "Zombie.h"
 
 #include <SDL2/SDL.h>
 
@@ -145,25 +147,48 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
     std::shared_ptr<GameObject> ptr(go);
 
     objectArray.push_back(ptr);
-
-    /** se o jogo já começou, chamar start imediatamente
+    
+    // só chamar Start se o jogo já começou
     if (started) {
         ptr->Start();
     }
-    */
+    
     return std::weak_ptr<GameObject>(ptr);
 }
 
-void State::Update(float dt) {
-    //Camera::Update(dt);
+    void State::Update(float dt) {
+        //Camera::Update(dt);
 
-    if (SDL_QuitRequested()) {
-        quitRequested = true;
-    }
+        if (SDL_QuitRequested()) {
+            quitRequested = true;
+        }
 
 
-    for (auto& obj : objectArray) {
-        obj->Update(dt);
+        for (auto& obj : objectArray) {
+            obj->Update(dt);
+        }
+
+        for (int i = 0; i < objectArray.size(); i++) {
+        for (int j = i + 1; j < objectArray.size(); j++) {
+
+            GameObject* obj1 = objectArray[i].get();
+            GameObject* obj2 = objectArray[j].get();
+
+            Collider* c1 = (Collider*) obj1->GetComponent("Collider");
+            Collider* c2 = (Collider*) obj2->GetComponent("Collider");
+
+            if (c1 && c2) {
+
+                if (Collision::IsColliding(
+                    c1->box,
+                    c2->box
+                )) {
+
+                    obj1->NotifyCollision(*obj2);
+                    obj2->NotifyCollision(*obj1);
+                }
+            }
+        }
     }
 
 

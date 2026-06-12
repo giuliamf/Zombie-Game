@@ -1,9 +1,11 @@
 #include "Character.h"
+#include "Collider.h"
+#include "Game.h"
 #include "GameObject.h"
 #include "Gun.h"
 #include "SpriteRenderer.h"
-#include "Game.h"
 #include "State.h"
+
 
 Character::Character(GameObject& associated)
     : Component(associated),
@@ -14,6 +16,8 @@ Character::Character(GameObject& associated)
 }
 
 void Character::Start() {
+
+    associated.AddComponent(new Collider(associated));
 
     GameObject* gunObject = new GameObject();
 
