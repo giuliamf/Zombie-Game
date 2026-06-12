@@ -113,3 +113,14 @@ void Zombie::NotifyHit() {
     // remover dps de 2 segundos
     deathTimer.Restart();
 }
+
+void Zombie::NotifyCollision(GameObject& other) {
+
+    if (other.GetComponent("Bullet")) {
+        NotifyHit();
+    }
+}
+
+bool Zombie::Is(std::string type) const {
+    return type == "Zombie";
+}
