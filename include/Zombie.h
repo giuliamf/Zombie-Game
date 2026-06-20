@@ -15,6 +15,7 @@ public:
 
     void NotifyHit();
     bool Is(std::string type) const override;
+    bool IsDead() const { return isDead; }
 
 private:
     float lifeTime;

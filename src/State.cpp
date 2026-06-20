@@ -11,6 +11,7 @@
 #include "TileSet.h"
 #include "Zombie.h"
 #include "WaveSpawner.h"
+#include "AIController.h"
 
 #include <SDL2/SDL.h>
 
@@ -115,6 +116,7 @@ GameObject* State::CreateZombie(float x, float y) {
     animator->AddAnimation("walk", Animation(0, 2, 0.2f));
     zombie->AddComponent(animator);
     zombie->AddComponent(new Zombie(*zombie));
+    zombie->AddComponent(new AIController(*zombie, 150.0f));
     animator->SetAnimation("walk");
     
     return zombie;

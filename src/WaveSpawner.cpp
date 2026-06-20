@@ -5,6 +5,7 @@
 #include "SpriteRenderer.h"
 #include "Animator.h"
 #include "Animation.h"
+#include "AIController.h"
 
 #include <cstdlib>
 #include <ctime>
@@ -120,6 +121,9 @@ void WaveSpawner::SpawnZombie() {
     
     // Adicionar componente Zombie
     zombie->AddComponent(new Zombie(*zombie));
+    
+    // Adicionar AIController para movimento automático (velocidade aumentada)
+    zombie->AddComponent(new AIController(*zombie, 150.0f));
     
     // Setar animação ANTES de adicionar ao State
     // (AddObject chama Start() imediatamente se o jogo já começou)

@@ -13,7 +13,7 @@
 Character::Character(GameObject& associated)
     : Component(associated),
       speed(0, 0),
-      linearSpeed(800), // trocar para 300, pois 800 é para testar o mapa
+      linearSpeed(300), // velocidade aumentada para melhor jogabilidade
       hp(2),
       damageCooldown(1.0),
       isDead(false)
@@ -126,4 +126,8 @@ void Character::NotifyCollision(GameObject& other) {
             std::cout << "Player tomou dano! HP: " << hp << std::endl;
         }
     }
+}
+
+bool Character::Is(std::string type) const {
+    return type == "Character";
 }
