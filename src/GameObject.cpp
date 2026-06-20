@@ -1,7 +1,5 @@
 #include "Component.h"
 #include "GameObject.h"
-#include <iostream>
-
 
 GameObject::GameObject()
     : box(), started(false), angleDeg(0), isDead(false)
@@ -18,7 +16,6 @@ void GameObject::Start() {
     if (started)
         return;
     
-    std::cout << "[GameObject::Start] Iniciando GameObject com " << components.size() << " componentes" << std::endl;
     started = true;
     
     // Inicializar componentes em múltiplas passadas até que não haja mais novos componentes
@@ -30,24 +27,18 @@ void GameObject::Start() {
         // Inicializar componentes que ainda não foram inicializados
         for (size_t i = lastProcessedIndex; i < currentSize; i++) {
             if (i >= components.size()) {
-                std::cout << "[GameObject::Start] ERRO: índice " << i << " >= size " << components.size() << std::endl;
                 break;
             }
             
             if (components[i] == nullptr) {
-                std::cout << "[GameObject::Start] AVISO: componente nullptr no índice " << i << std::endl;
                 continue;
             }
             
-            std::cout << "[GameObject::Start] Chamando Start() no componente " << i << std::endl;
             components[i]->Start();
-            std::cout << "[GameObject::Start] Start() do componente " << i << " completado" << std::endl;
         }
         
         lastProcessedIndex = currentSize;
     }
-    
-    std::cout << "[GameObject::Start] GameObject iniciado com sucesso. Total componentes: " << components.size() << std::endl;
 }
 
 void GameObject::Update(float dt) {
@@ -55,12 +46,10 @@ void GameObject::Update(float dt) {
 
     for (size_t i = 0; i < components.size(); i++) {
         if (i >= components.size()) {
-            std::cout << "[GameObject::Update] ERRO: índice " << i << " >= size " << components.size() << std::endl;
             break;
         }
         
         if (components[i] == nullptr) {
-            std::cout << "[GameObject::Update] AVISO: componente nullptr no índice " << i << std::endl;
             continue;
         }
         
@@ -71,12 +60,10 @@ void GameObject::Update(float dt) {
 void GameObject::Render() {
     for (size_t i = 0; i < components.size(); i++) {
         if (i >= components.size()) {
-            std::cout << "[GameObject::Render] ERRO: índice " << i << " >= size " << components.size() << std::endl;
             break;
         }
         
         if (components[i] == nullptr) {
-            std::cout << "[GameObject::Render] AVISO: componente nullptr no índice " << i << std::endl;
             continue;
         }
         

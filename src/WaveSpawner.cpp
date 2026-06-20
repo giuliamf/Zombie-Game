@@ -23,11 +23,10 @@ void WaveSpawner::Start() {
     waves.push_back(Wave(5, 1.0f));    // Wave 1: 5 zombies, 1.0s de intervalo
     waves.push_back(Wave(10, 0.7f));   // Wave 2: 10 zombies, 0.7s de intervalo
     waves.push_back(Wave(15, 0.5f));   // Wave 3: 15 zombies, 0.5s de intervalo
-    waves.push_back(Wave(20, 0.4f));   // Wave 4: 20 zombies, 0.4s de intervalo (extra)
-    waves.push_back(Wave(30, 0.3f));   // Wave 5: 30 zombies, 0.3s de intervalo (extra)
+    waves.push_back(Wave(20, 0.4f));   // Wave 4: 20 zombies, 0.4s de intervalo
+    waves.push_back(Wave(30, 0.3f));   // Wave 5: 30 zombies, 0.3s de intervalo
     
-    std::cout << "[WaveSpawner] Iniciado! Total de waves: " << waves.size() << std::endl;
-    std::cout << "[WaveSpawner] Wave 1 começou! Zombies: " << waves[0].zombieCount << std::endl;
+    std::cout << "Wave 1 começou! Zombies: " << waves[0].zombieCount << std::endl;
     
     // Inicializar timer
     spawnTimer.Restart();
@@ -36,23 +35,13 @@ void WaveSpawner::Start() {
 void WaveSpawner::Update(float dt) {
     // Verificar se ainda há waves para processar
     if (currentWave >= waves.size()) {
-        return; // Silenciosamente retornar se todas as waves foram completadas
+        return;
     }
     
     // Atualizar timer
     spawnTimer.Update(dt);
     
-    // Debug: verificar se Update está sendo chamado
-    static float debugTimer = 0;
-    debugTimer += dt;
-    if (debugTimer >= 5.0f) {
-        std::cout << "[WaveSpawner DEBUG] Update rodando. Wave: " << (currentWave + 1)
-                  << ", Spawnados: " << spawnedZombies << "/" << waves[currentWave].zombieCount
-                  << ", Timer: " << spawnTimer.Get() << "s" << std::endl;
-        debugTimer = 0;
-    }
-    
-    // Pegar referência da wave atual (agora sabemos que currentWave é válido)
+    // Pegar referência da wave atual
     Wave& currentWaveData = waves[currentWave];
     
     // Verificar se ainda há zombies para spawnar nesta wave
@@ -62,10 +51,6 @@ void WaveSpawner::Update(float dt) {
             SpawnZombie();
             spawnedZombies++;
             spawnTimer.Restart();
-            
-            std::cout << "[WaveSpawner] Zombie spawnado! ("
-                      << spawnedZombies << "/" << currentWaveData.zombieCount
-                      << ") Wave " << (currentWave + 1) << std::endl;
             
             // Verificar se completou a wave APÓS spawnar
             if (spawnedZombies >= currentWaveData.zombieCount) {
@@ -112,10 +97,7 @@ void WaveSpawner::SpawnZombie() {
             break;
     }
     
-    // Debug: mostrar posição de spawn
-    std::cout << "[WaveSpawner] Spawnando zombie em X=" << x << " Y=" << y << std::endl;
-    
-    // Criar GameObject do zombie (exatamente como State::CreateZombie)
+    // Criar GameObject do zombie
     GameObject* zombie = new GameObject();
     
     zombie->box.pos.x = x;
@@ -154,13 +136,13 @@ void WaveSpawner::NextWave() {
     
     if (currentWave < waves.size()) {
         std::cout << "\n========================================" << std::endl;
-        std::cout << "[WaveSpawner] Wave " << (currentWave + 1) << " começou!" << std::endl;
-        std::cout << "[WaveSpawner] Zombies: " << waves[currentWave].zombieCount << std::endl;
-        std::cout << "[WaveSpawner] Intervalo: " << waves[currentWave].spawnInterval << "s" << std::endl;
+        std::cout << "Wave " << (currentWave + 1) << " começou!" << std::endl;
+        std::cout << "Zombies: " << waves[currentWave].zombieCount << std::endl;
+        std::cout << "Intervalo: " << waves[currentWave].spawnInterval << "s" << std::endl;
         std::cout << "========================================\n" << std::endl;
     } else {
         std::cout << "\n========================================" << std::endl;
-        std::cout << "[WaveSpawner] TODAS AS WAVES COMPLETADAS!" << std::endl;
+        std::cout << "TODAS AS WAVES COMPLETADAS!" << std::endl;
         std::cout << "========================================\n" << std::endl;
     }
 }

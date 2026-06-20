@@ -51,11 +51,8 @@ void Bullet::NotifyCollision(GameObject& other) {
     
     // Verificar se o outro objeto está morto
     if (other.IsDead()) return;
-    
-    std::cout << "Colidiu com algo!\n";
 
     if (other.GetComponent("Zombie")) {
-        std::cout << "Colidiu com zombie!\n";
         associated.RequestDelete();
     }
 }
