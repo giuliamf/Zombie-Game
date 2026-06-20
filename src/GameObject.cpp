@@ -21,7 +21,9 @@ void GameObject::Start() {
     
     // Usar índice ao invés de iterador, pois Start() pode adicionar componentes
     for (size_t i = 0; i < components.size(); i++) {
-        components[i]->Start();
+        if (components[i] != nullptr) {
+            components[i]->Start();
+        }
     }
 }
 
@@ -29,13 +31,17 @@ void GameObject::Update(float dt) {
     Start();
 
     for (Component* component : components) {
-        component->Update(dt);
+        if (component != nullptr) {
+            component->Update(dt);
+        }
     }
 }
 
 void GameObject::Render() {
     for (Component* component : components) {
-        component->Render();
+        if (component != nullptr) {
+            component->Render();
+        }
     }
 }
 

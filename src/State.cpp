@@ -10,6 +10,7 @@
 #include "TileMap.h"
 #include "TileSet.h"
 #include "Zombie.h"
+#include "WaveSpawner.h"
 
 #include <SDL2/SDL.h>
 
@@ -36,15 +37,7 @@ State::State()
         )
     );
 
-
-    // ENEMIES - Criar múltiplos zombies
-    GameObject* enemy1 = CreateZombie(1800, 1300);  // Direita
-    GameObject* enemy2 = CreateZombie(1280, 900);   // Acima
-    GameObject* enemy3 = CreateZombie(800, 1300);   // Esquerda
-    GameObject* enemy4 = CreateZombie(1500, 1600);  // Abaixo-direita
-    GameObject* enemy5 = CreateZombie(1000, 1000);  // Diagonal superior-esquerda
-
-    // AQUI ENTRA O MAPA
+    // AQUI ENTRA O MAPA (WaveSpawner será adicionado depois do player)
 
     mapTileSet = std::make_unique<TileSet>(
         64, 64,
@@ -89,15 +82,14 @@ State::State()
 
     playerAnimator->SetAnimation("walk");
 
+    // Criar WaveSpawner
+    GameObject* spawner = new GameObject();
+    spawner->AddComponent(new WaveSpawner(*spawner, this));
+    
     AddObject(bg);
     AddObject(tileMapObject);
     AddObject(player);
-    AddObject(enemy1);
-    AddObject(enemy2);
-    AddObject(enemy3);
-    AddObject(enemy4);
-    AddObject(enemy5);
-    
+    AddObject(spawner);
 }
 
 
@@ -169,27 +161,34 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
         }
 
         for (int i = 0; i < objectArray.size(); i++) {
-        for (int j = i + 1; j < objectArray.size(); j++) {
-
-            GameObject* obj1 = objectArray[i].get();
-            GameObject* obj2 = objectArray[j].get();
-
-            Collider* c1 = (Collider*) obj1->GetComponent("Collider");
-            Collider* c2 = (Collider*) obj2->GetComponent("Collider");
-
-            if (c1 && c2) {
-
-                if (Collision::IsColliding(
-                    c1->box,
-                    c2->box
-                )) {
-
-                    obj1->NotifyCollision(*obj2);
-                    obj2->NotifyCollision(*obj1);
+            for (int j = i + 1; j < objectArray.size(); j++) {
+    
+                GameObject* obj1 = objectArray[i].get();
+                GameObject* obj2 = objectArray[j].get();
+    
+                // Pular se algum objeto já está morto
+                if (obj1->IsDead() || obj2->IsDead()) {
+                    continue;
+                }
+    
+                Collider* c1 = (Collider*) obj1->GetComponent("Collider");
+                Collider* c2 = (Collider*) obj2->GetComponent("Collider");
+    
+                if (c1 && c2) {
+    
+                    if (Collision::IsColliding(
+                        c1->box,
+                        c2->box
+                    )) {
+                        // Verificar novamente antes de notificar (pode ter morrido em outra colisão)
+                        if (!obj1->IsDead() && !obj2->IsDead()) {
+                            obj1->NotifyCollision(*obj2);
+                            obj2->NotifyCollision(*obj1);
+                        }
+                    }
                 }
             }
         }
-    }
 
 
     // remover objetos mortos
