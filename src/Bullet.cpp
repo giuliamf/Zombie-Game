@@ -46,6 +46,12 @@ void Bullet::Render() {
 }
 
 void Bullet::NotifyCollision(GameObject& other) {
+    // Se a bala já foi marcada para deletar, não processar colisões
+    if (associated.IsDead()) return;
+    
+    // Verificar se o outro objeto está morto
+    if (other.IsDead()) return;
+    
     std::cout << "Colidiu com algo!\n";
 
     if (other.GetComponent("Zombie")) {

@@ -110,6 +110,11 @@ void Character::SetSpeed(Vec2 dir) {
 }
 
 void Character::NotifyCollision(GameObject& other) {
+    // Se o player já está morto, não processar colisões
+    if (isDead) return;
+    
+    // Verificar se o outro objeto está morto
+    if (other.IsDead()) return;
 
     if (other.GetComponent("Zombie")) {
 

@@ -39,6 +39,9 @@ void WaveSpawner::Update(float dt) {
         return; // Silenciosamente retornar se todas as waves foram completadas
     }
     
+    // Atualizar timer
+    spawnTimer.Update(dt);
+    
     // Debug: verificar se Update está sendo chamado
     static float debugTimer = 0;
     debugTimer += dt;
@@ -49,9 +52,7 @@ void WaveSpawner::Update(float dt) {
         debugTimer = 0;
     }
     
-    // Atualizar timer
-    spawnTimer.Update(dt);
-    
+    // Pegar referência da wave atual (agora sabemos que currentWave é válido)
     Wave& currentWaveData = waves[currentWave];
     
     // Verificar se ainda há zombies para spawnar nesta wave
@@ -62,13 +63,15 @@ void WaveSpawner::Update(float dt) {
             spawnedZombies++;
             spawnTimer.Restart();
             
-            std::cout << "[WaveSpawner] Zombie spawnado! (" 
-                      << spawnedZombies << "/" << currentWaveData.zombieCount 
+            std::cout << "[WaveSpawner] Zombie spawnado! ("
+                      << spawnedZombies << "/" << currentWaveData.zombieCount
                       << ") Wave " << (currentWave + 1) << std::endl;
+            
+            // Verificar se completou a wave APÓS spawnar
+            if (spawnedZombies >= currentWaveData.zombieCount) {
+                NextWave();
+            }
         }
-    } else {
-        // Wave atual completa, avançar para próxima
-        NextWave();
     }
 }
 

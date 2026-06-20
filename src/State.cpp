@@ -138,11 +138,14 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
 
     std::shared_ptr<GameObject> ptr(go);
 
-    objectArray.push_back(ptr);
-    
-    // só chamar Start se o jogo já começou
+    // Se o jogo já começou, adicionar à fila de pendentes
+    // para evitar modificar o array durante iteração
     if (started) {
-        ptr->Start();
+        std::cout << "[State::AddObject] Adicionando objeto à fila de pendentes" << std::endl;
+        pendingObjects.push_back(ptr);
+    } else {
+        // Se ainda não começou, adicionar diretamente
+        objectArray.push_back(ptr);
     }
     
     return std::weak_ptr<GameObject>(ptr);
@@ -155,35 +158,87 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
             quitRequested = true;
         }
 
+        // Processar objetos pendentes ANTES do Update
+        if (!pendingObjects.empty()) {
+            std::cout << "[State::Update] Processando " << pendingObjects.size() << " objetos pendentes" << std::endl;
+            for (auto& obj : pendingObjects) {
+                obj->Start();
+                objectArray.push_back(obj);
+            }
+            pendingObjects.clear();
+            std::cout << "[State::Update] Objetos pendentes adicionados. Total objetos: " << objectArray.size() << std::endl;
+        }
 
         for (auto& obj : objectArray) {
             obj->Update(dt);
         }
 
-        for (int i = 0; i < objectArray.size(); i++) {
-            for (int j = i + 1; j < objectArray.size(); j++) {
-    
-                GameObject* obj1 = objectArray[i].get();
+        // Cachear o tamanho antes do loop para evitar problemas se objetos forem adicionados
+        size_t arraySize = objectArray.size();
+        
+        std::cout << "[State::Update] Iniciando detecção de colisão. Total objetos: " << arraySize << std::endl;
+        
+        for (size_t i = 0; i < arraySize; i++) {
+            // Verificar se o índice ainda é válido (objetos podem ter sido removidos)
+            if (i >= objectArray.size()) {
+                std::cout << "[State::Update] Índice i=" << i << " inválido, quebrando loop externo" << std::endl;
+                break;
+            }
+            
+            GameObject* obj1 = objectArray[i].get();
+            
+            // Verificar se o ponteiro é válido
+            if (!obj1) {
+                std::cout << "[State::Update] obj1 nullptr no índice " << i << std::endl;
+                continue;
+            }
+            
+            // Pular se objeto está morto
+            if (obj1->IsDead()) {
+                continue;
+            }
+            
+            std::cout << "[State::Update] Processando objeto " << i << std::endl;
+            
+            for (size_t j = i + 1; j < arraySize; j++) {
+                // Verificar se o índice ainda é válido
+                if (j >= objectArray.size()) {
+                    std::cout << "[State::Update] Índice j=" << j << " inválido, quebrando loop interno" << std::endl;
+                    break;
+                }
+                
                 GameObject* obj2 = objectArray[j].get();
-    
-                // Pular se algum objeto já está morto
-                if (obj1->IsDead() || obj2->IsDead()) {
+                
+                // Verificar se o ponteiro é válido
+                if (!obj2) {
+                    std::cout << "[State::Update] obj2 nullptr no índice " << j << std::endl;
                     continue;
                 }
-    
+                
+                // Pular se objeto está morto
+                if (obj2->IsDead()) {
+                    continue;
+                }
+                
+                std::cout << "[State::Update] Verificando colisão entre " << i << " e " << j << std::endl;
+                
                 Collider* c1 = (Collider*) obj1->GetComponent("Collider");
                 Collider* c2 = (Collider*) obj2->GetComponent("Collider");
+                
+                std::cout << "[State::Update] c1=" << (c1 ? "válido" : "null") << ", c2=" << (c2 ? "válido" : "null") << std::endl;
     
                 if (c1 && c2) {
+                    std::cout << "[State::Update] Ambos têm colliders, testando colisão..." << std::endl;
     
-                    if (Collision::IsColliding(
-                        c1->box,
-                        c2->box
-                    )) {
+                    if (Collision::IsColliding(c1->box, c2->box)) {
+                        std::cout << "[State::Update] COLISÃO DETECTADA entre " << i << " e " << j << std::endl;
+                        
                         // Verificar novamente antes de notificar (pode ter morrido em outra colisão)
                         if (!obj1->IsDead() && !obj2->IsDead()) {
+                            std::cout << "[State::Update] Notificando colisão..." << std::endl;
                             obj1->NotifyCollision(*obj2);
                             obj2->NotifyCollision(*obj1);
+                            std::cout << "[State::Update] Colisão notificada com sucesso" << std::endl;
                         }
                     }
                 }

@@ -81,14 +81,16 @@ void Zombie::Update(float dt) {
 }
 
 void Zombie::Start() {
-    associated.AddComponent(new Collider(associated));
-
+    // Primeiro pegar o sprite dos componentes existentes
     for (auto component : associated.GetComponents()) {
         sprite = dynamic_cast<SpriteRenderer*>(component);
         if (sprite != nullptr) {
             break;
         }
     }
+    
+    // Depois adicionar o Collider
+    associated.AddComponent(new Collider(associated));
 }
 
 void Zombie::NotifyHit() {
@@ -115,6 +117,11 @@ void Zombie::NotifyHit() {
 }
 
 void Zombie::NotifyCollision(GameObject& other) {
+    // Se já está morto, não processar colisões
+    if (isDead) return;
+    
+    // Verificar se o outro objeto está morto também
+    if (other.IsDead()) return;
 
     if (other.GetComponent("Bullet")) {
         NotifyHit();
