@@ -1,6 +1,5 @@
-#include "Component.h"
 #include "GameObject.h"
-
+#include "Component.h"
 
 GameObject::GameObject()
     : box(), started(false), angleDeg(0), isDead(false)
@@ -16,13 +15,12 @@ GameObject::~GameObject() {
 void GameObject::Start() {
     if (started)
         return;
-    
-    started = true;
-    
-    // Usar índice ao invés de iterador, pois Start() pode adicionar componentes
-    for (size_t i = 0; i < components.size(); i++) {
-        components[i]->Start();
+
+    for (Component* component : components) {
+        component->Start();
     }
+
+    started = true;
 }
 
 void GameObject::Update(float dt) {
@@ -53,21 +51,4 @@ void GameObject::RequestDelete() {
 
 bool GameObject::IsDead() const {
     return isDead;
-}
-
-void GameObject::NotifyCollision(GameObject& other) {
-    for (auto& comp : components) {
-        comp->NotifyCollision(other);
-    }
-}
-
-Component* GameObject::GetComponent(std::string type) {
-
-    for (auto& comp : components) {
-        if (comp->Is(type)) {
-            return comp;
-        }
-    }
-
-    return nullptr;
 }

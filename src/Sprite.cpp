@@ -1,6 +1,6 @@
-#include "Camera.h"
-#include "Game.h"
 #include "Sprite.h"
+#include "Game.h"
+#include "Camera.h"
 
 #include <iostream>
 

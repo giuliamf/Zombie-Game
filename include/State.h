@@ -34,5 +34,5 @@ private:
     bool started;
 
     // adicionar mais de um zumbi
-    GameObject* CreateZombie(float x, float y);
+    GameObject*CreateZombie(float x, float y);
 };

@@ -1,10 +1,8 @@
-#include "Animator.h"
-#include "Collider.h"
-#include "GameObject.h"
-#include "InputManager.h"
-#include "SpriteRenderer.h"
 #include "Zombie.h"
-
+#include "SpriteRenderer.h"
+#include "GameObject.h"
+#include "Animator.h"
+#include "InputManager.h"
 
 #include <iostream>
 
@@ -81,8 +79,6 @@ void Zombie::Update(float dt) {
 }
 
 void Zombie::Start() {
-    associated.AddComponent(new Collider(associated));
-
     for (auto component : associated.GetComponents()) {
         sprite = dynamic_cast<SpriteRenderer*>(component);
         if (sprite != nullptr) {
@@ -112,15 +108,4 @@ void Zombie::NotifyHit() {
     
     // remover dps de 2 segundos
     deathTimer.Restart();
-}
-
-void Zombie::NotifyCollision(GameObject& other) {
-
-    if (other.GetComponent("Bullet")) {
-        NotifyHit();
-    }
-}
-
-bool Zombie::Is(std::string type) const {
-    return type == "Zombie";
 }
