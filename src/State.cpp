@@ -1,16 +1,13 @@
-#include "Animation.h"
-#include "Animator.h"
-#include "Camera.h"
-#include "Character.h"
-#include "Collider.h"
-#include "Collision.h"
-#include "PlayerController.h"
-#include "SpriteRenderer.h"
 #include "State.h"
+#include "SpriteRenderer.h"
+#include "Zombie.h"
+#include "Animator.h"
+#include "Animation.h"
+#include "Camera.h"
+#include "Character.h" 
+#include "PlayerController.h"
 #include "TileMap.h"
 #include "TileSet.h"
-#include "Zombie.h"
-#include "WaveSpawner.h"
 
 #include <SDL2/SDL.h>
 
@@ -37,7 +34,15 @@ State::State()
         )
     );
 
-    // AQUI ENTRA O MAPA (WaveSpawner será adicionado depois do player)
+
+    // ENEMIES - Criar múltiplos zombies
+    GameObject* enemy1 = CreateZombie(1800, 1300);  // Direita
+    GameObject* enemy2 = CreateZombie(1280, 900);   // Acima
+    GameObject* enemy3 = CreateZombie(800, 1300);   // Esquerda
+    GameObject* enemy4 = CreateZombie(1500, 1600);  // Abaixo-direita
+    GameObject* enemy5 = CreateZombie(1000, 1000);  // Diagonal superior-esquerda
+
+    // AQUI ENTRA O MAPA
 
     mapTileSet = std::make_unique<TileSet>(
         64, 64,
@@ -82,14 +87,15 @@ State::State()
 
     playerAnimator->SetAnimation("walk");
 
-    // Criar WaveSpawner
-    GameObject* spawner = new GameObject();
-    spawner->AddComponent(new WaveSpawner(*spawner, this));
-    
     AddObject(bg);
     AddObject(tileMapObject);
     AddObject(player);
-    AddObject(spawner);
+    AddObject(enemy1);
+    AddObject(enemy2);
+    AddObject(enemy3);
+    AddObject(enemy4);
+    AddObject(enemy5);
+    
 }
 
 
@@ -138,91 +144,27 @@ std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
 
     std::shared_ptr<GameObject> ptr(go);
 
-    // Se o jogo já começou, adicionar à fila de pendentes
-    // para evitar modificar o array durante iteração
+    objectArray.push_back(ptr);
+
+    /** se o jogo já começou, chamar start imediatamente
     if (started) {
-        pendingObjects.push_back(ptr);
-    } else {
-        // Se ainda não começou, adicionar diretamente
-        objectArray.push_back(ptr);
+        ptr->Start();
     }
-    
+    */
     return std::weak_ptr<GameObject>(ptr);
 }
 
-    void State::Update(float dt) {
-        //Camera::Update(dt);
+void State::Update(float dt) {
+    //Camera::Update(dt);
 
-        if (SDL_QuitRequested()) {
-            quitRequested = true;
-        }
+    if (SDL_QuitRequested()) {
+        quitRequested = true;
+    }
 
-        // Processar objetos pendentes ANTES do Update
-        if (!pendingObjects.empty()) {
-            for (auto& obj : pendingObjects) {
-                obj->Start();
-                objectArray.push_back(obj);
-            }
-            pendingObjects.clear();
-        }
 
-        for (auto& obj : objectArray) {
-            obj->Update(dt);
-        }
-
-        // Cachear o tamanho antes do loop para evitar problemas se objetos forem adicionados
-        size_t arraySize = objectArray.size();
-        
-        for (size_t i = 0; i < arraySize; i++) {
-            // Verificar se o índice ainda é válido (objetos podem ter sido removidos)
-            if (i >= objectArray.size()) {
-                break;
-            }
-            
-            GameObject* obj1 = objectArray[i].get();
-            
-            // Verificar se o ponteiro é válido
-            if (!obj1) {
-                continue;
-            }
-            
-            // Pular se objeto está morto
-            if (obj1->IsDead()) {
-                continue;
-            }
-            
-            for (size_t j = i + 1; j < arraySize; j++) {
-                // Verificar se o índice ainda é válido
-                if (j >= objectArray.size()) {
-                    break;
-                }
-                
-                GameObject* obj2 = objectArray[j].get();
-                
-                // Verificar se o ponteiro é válido
-                if (!obj2) {
-                    continue;
-                }
-                
-                // Pular se objeto está morto
-                if (obj2->IsDead()) {
-                    continue;
-                }
-                
-                Collider* c1 = (Collider*) obj1->GetComponent("Collider");
-                Collider* c2 = (Collider*) obj2->GetComponent("Collider");
-    
-                if (c1 && c2) {
-                    if (Collision::IsColliding(c1->box, c2->box)) {
-                        // Verificar novamente antes de notificar (pode ter morrido em outra colisão)
-                        if (!obj1->IsDead() && !obj2->IsDead()) {
-                            obj1->NotifyCollision(*obj2);
-                            obj2->NotifyCollision(*obj1);
-                        }
-                    }
-                }
-            }
-        }
+    for (auto& obj : objectArray) {
+        obj->Update(dt);
+    }
 
 
     // remover objetos mortos
