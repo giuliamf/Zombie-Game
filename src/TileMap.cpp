@@ -1,8 +1,8 @@
-#include "TileMap.h"
 #include "GameObject.h"
+#include "TileMap.h"
+
 #include <fstream>
 #include <sstream>
-
 #include <iostream>
 
 TileMap::TileMap(GameObject& associated, const std::string& file, TileSet* tileSet)

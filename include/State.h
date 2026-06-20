@@ -26,6 +26,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<GameObject>> objectArray;
+    std::vector<std::shared_ptr<GameObject>> pendingObjects; // Objetos a serem adicionados no próximo frame
     Music music;
     bool quitRequested;
 
@@ -34,5 +35,5 @@ private:
     bool started;
 
     // adicionar mais de um zumbi
-    GameObject*CreateZombie(float x, float y);
+    GameObject* CreateZombie(float x, float y);
 };

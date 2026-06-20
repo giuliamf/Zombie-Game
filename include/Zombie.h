@@ -11,8 +11,10 @@ public:
 
     void Update(float dt) override;
     void Start() override;
+    void NotifyCollision(GameObject& other) override;
 
     void NotifyHit();
+    bool Is(std::string type) const override;
 
 private:
     float lifeTime;

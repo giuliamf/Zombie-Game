@@ -1,7 +1,7 @@
-#include "PlayerController.h"
+#include "Character.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "Character.h"
+#include "PlayerController.h"
 
 PlayerController::PlayerController(GameObject& associated)
     : Component(associated)
@@ -24,6 +24,12 @@ void PlayerController::Update(float dt) {
     }
 
     if (character == nullptr) return;
+    
+    // Se o player está morto, não aceitar input
+    if (character->IsDead()) {
+        character->SetSpeed(Vec2(0, 0));
+        return;
+    }
 
     Vec2 direction(0, 0);
 
