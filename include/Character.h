@@ -15,6 +15,7 @@ public:
     void NotifyCollision(GameObject& other) override;
     void SetSpeed(Vec2 dir);
     bool IsDead() const { return isDead; }
+    bool Is(std::string type) const override;
 
 private:
     Vec2 speed;
