@@ -279,4 +279,4 @@ Ao concluir todas as 5 waves, `StageState` detecta `WaveSpawner::IsWaveComplete(
 
 ---
 
-*Giulia Ferreira — UnB 200018795*
+*Giulia Moura Ferreira — 200018795 - Universidade de Brasília - Introdução ao Desenvolvimeto de Jogos*
