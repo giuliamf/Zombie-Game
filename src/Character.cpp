@@ -13,8 +13,8 @@
 Character::Character(GameObject& associated)
     : Component(associated),
       speed(0, 0),
-      linearSpeed(300), // velocidade aumentada para melhor jogabilidade
-      hp(2),
+      linearSpeed(200), // velocidade aumentada para melhor jogabilidade
+      hp(100),
       damageCooldown(1.0),
       isDead(false)
 {
@@ -44,19 +44,19 @@ void Character::Start() {
 
     /** pegar referência segura do player
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetState().GetObjectPtr(&associated); */
+        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated); */
 
     
     // criar componente Gun
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetState().GetObjectPtr(&associated);
+        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated);
 
     Gun* gunComp = new Gun(*gunObject, characterPtr);
 
     gunObject->AddComponent(gunComp);
 
     // adicionar ao State e guardar referência
-    gun = Game::GetInstance().GetState().AddObject(gunObject);
+    gun = Game::GetInstance().GetCurrentState().AddObject(gunObject);
 }
 
 
@@ -69,6 +69,12 @@ void Character::Update(float dt) {
     // Movimentação só acontece se estiver vivo
     associated.box.pos.x += speed.x * dt;
     associated.box.pos.y += speed.y * dt;
+
+    // Limites do mapa
+    if (associated.box.pos.x < 640.0f)  associated.box.pos.x = 640.0f;
+    if (associated.box.pos.y < 512.0f)  associated.box.pos.y = 512.0f;
+    if (associated.box.pos.x > 1920.0f) associated.box.pos.x = 1920.0f;
+    if (associated.box.pos.y > 2048.0f) associated.box.pos.y = 2048.0f;
 
     // Verificar se morreu
     if (hp <= 0) {

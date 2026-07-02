@@ -54,7 +54,7 @@ void AIController::SetLinearSpeed(float speed) {
 
 void AIController::FindTarget() {
     // Acessar o State para buscar todos os objetos
-    State& state = Game::GetInstance().GetState();
+    State& state = Game::GetInstance().GetCurrentState();
     std::vector<std::shared_ptr<GameObject>>& objects = state.GetObjectArray();
 
     // Procurar por um GameObject que tenha o componente Character
