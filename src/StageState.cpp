@@ -1,5 +1,6 @@
 #include "StageState.h"
 
+#include "InputManager.h"
 #include "Animation.h"
 #include "Animator.h"
 #include "Character.h"
@@ -95,6 +96,12 @@ void StageState::Resume() {
 }
 
 void StageState::Update(float dt) {
+    // ESC — retorna à TitleState sem encerrar o programa
+    if (InputManager::GetInstance().IsKeyDown(SDLK_ESCAPE)) {
+        popRequested = true;
+        return;
+    }
+
     UpdateArray(dt);
 }
 
