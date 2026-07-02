@@ -185,6 +185,8 @@ void Game::Run() {
         InputManager::GetInstance().Update();
 
         // 5. Atualiza o estado do topo
+        // garantir alpha opaco antes de limpar — sdl2-compat pode deixar alpha=0
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         GetCurrentState().Update(dt);
 

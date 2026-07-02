@@ -21,6 +21,7 @@ public:
 private:
     Music music;
     std::unique_ptr<TileSet> mapTileSet;
+    bool endTriggered; // impede que a transição para EndState dispare mais de uma vez
 
     GameObject* CreateZombie(float x, float y);
 };

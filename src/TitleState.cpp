@@ -1,4 +1,5 @@
 #include "TitleState.h"
+#include "Camera.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "InputManager.h"
@@ -54,6 +55,9 @@ void TitleState::LoadAssets() {
 
 void TitleState::Start() {
     StartArray();
+    // resetar câmera: TitleState renderiza em coordenadas de tela (0,0)
+    Camera::pos.x = 0;
+    Camera::pos.y = 0;
 }
 
 void TitleState::Pause() {

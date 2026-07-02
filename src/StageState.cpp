@@ -4,6 +4,9 @@
 #include "Animation.h"
 #include "Animator.h"
 #include "Character.h"
+#include "EndState.h"
+#include "Game.h"
+#include "GameData.h"
 #include "PlayerController.h"
 #include "SpriteRenderer.h"
 #include "TileMap.h"
@@ -13,7 +16,8 @@
 #include "AIController.h"
 
 StageState::StageState()
-    : mapTileSet(nullptr)
+    : mapTileSet(nullptr),
+      endTriggered(false)
 {
     LoadAssets();
 
@@ -103,6 +107,37 @@ void StageState::Update(float dt) {
     }
 
     UpdateArray(dt);
+
+    // Verificar condições de fim de jogo apenas uma vez
+    if (endTriggered) return;
+
+    // 1. Morte do jogador — percorrer objectArray procurando Character morto
+    for (auto& obj : objectArray) {
+        Character* character = dynamic_cast<Character*>(
+            obj->GetComponent("Character")
+        );
+        if (character != nullptr && character->IsDead()) {
+            endTriggered = true;
+            GameData::playerVictory = false;
+            Game::GetInstance().Push(new EndState());
+            popRequested = true;
+            return;
+        }
+    }
+
+    // 2. Vitória — todas as waves foram completadas
+    for (auto& obj : objectArray) {
+        WaveSpawner* spawner = dynamic_cast<WaveSpawner*>(
+            obj->GetComponent("WaveSpawner")
+        );
+        if (spawner != nullptr && spawner->IsWaveComplete()) {
+            endTriggered = true;
+            GameData::playerVictory = true;
+            Game::GetInstance().Push(new EndState());
+            popRequested = true;
+            return;
+        }
+    }
 }
 
 void StageState::Render() {
