@@ -42,6 +42,12 @@ Game::Game(const std::string& title, int width, int height)
         std::exit(EXIT_FAILURE);
     }
 
+    // inicializa suporte a fontes TrueType
+    if (TTF_Init() != 0) {
+        std::cerr << "Erro TTF_Init: " << TTF_GetError() << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
     // audio: ativa musicas mp3 e ogg
     if (Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3) == 0) {
         std::cerr << "Erro Mix_Init: " << Mix_GetError() << std::endl;
@@ -100,6 +106,8 @@ Game::~Game() {
 
     Mix_CloseAudio();
     Mix_Quit();
+
+    TTF_Quit();
 
     IMG_Quit();
 
