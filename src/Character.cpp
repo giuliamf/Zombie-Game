@@ -13,8 +13,8 @@
 Character::Character(GameObject& associated)
     : Component(associated),
       speed(0, 0),
-      linearSpeed(300), // velocidade aumentada para melhor jogabilidade
-      hp(2),
+      linearSpeed(200), // velocidade aumentada para melhor jogabilidade
+      hp(100),
       damageCooldown(1.0),
       isDead(false)
 {

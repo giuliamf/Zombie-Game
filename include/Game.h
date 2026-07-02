@@ -21,6 +21,8 @@ public:
 private:
     Game(const std::string& title, int width, int height);
 
+    float CalculateDeltaTime();
+
     static Game* instance;
 
     SDL_Window* window;
@@ -28,4 +30,6 @@ private:
 
     std::stack<std::unique_ptr<State>> stateStack;
     State* storedState;
+
+    Uint32 frameStart;
 };

@@ -55,29 +55,6 @@ void Zombie::Update(float dt) {
     }
 
 
-    deathTimer.Update(dt);
-
-    if (deathTimer.Get() > 3.0f) {
-        isDead = true;
-
-        std::cout << "Zombie morreu!" << std::endl;
-        if (sprite == nullptr) return;
-
-        for (auto comp : associated.GetComponents()) {
-
-            // parar Animator corretamente
-            Animator* anim = dynamic_cast<Animator*>(comp);
-            if (anim != nullptr) {
-                anim->Stop(); 
-            }
-
-            // mudar sprite
-            SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
-            if (sr != nullptr) {
-                sr->sprite.SetFrame(5);
-            }
-        }
-    }
 }
 
 void Zombie::Start() {
@@ -88,7 +65,11 @@ void Zombie::Start() {
             break;
         }
     }
-    
+
+    // Resetar o timer aqui para que o contador de vida comece a partir
+    // do momento em que o zombie é inicializado no jogo, não da construção
+    deathTimer.Restart();
+
     // Depois adicionar o Collider
     associated.AddComponent(new Collider(associated));
 }

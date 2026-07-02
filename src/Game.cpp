@@ -20,7 +20,7 @@ Game& Game::GetInstance() {
 
 // para evitar lixo de memoria
 Game::Game(const std::string& title, int width, int height)
-    : window(nullptr), renderer(nullptr), storedState(nullptr)
+    : window(nullptr), renderer(nullptr), storedState(nullptr), frameStart(0)
 {
     if (instance != nullptr) {
         std::cerr << "Erro: Game já foi instanciado!" << std::endl;
@@ -122,35 +122,73 @@ void Game::Push(State* state) {
     storedState = state;
 }
 
-// 30 fps
-void Game::Run() {
-    Uint32 startTime = 0;
-    float dt = 0.0f;
+// Calcula o delta time em segundos desde o último frame
+float Game::CalculateDeltaTime() {
+    Uint32 now = SDL_GetTicks();
+    float dt = (now - frameStart) / 1000.0f;
+    frameStart = now;
+    return dt;
+}
 
-    // encerra imediatamente se nenhum estado foi fornecido via Push()
+void Game::Run() {
+    // Encerra imediatamente se nenhum estado foi fornecido via Push()
     if (storedState == nullptr) {
         return;
     }
 
-    // move o estado fornecido via Push() para o topo da pilha antes de iniciar
+    // Empilha o estado inicial e o inicia
     stateStack.emplace(storedState);
     storedState = nullptr;
-
     stateStack.top()->Start();
-    while (!stateStack.empty() && !InputManager::GetInstance().QuitRequested()) {
-        startTime = SDL_GetTicks();
 
-        SDL_RenderClear(renderer);
+    // frameStart é definido APÓS Start() para não inflar o dt do primeiro frame
+    // com o tempo gasto em carregamento de assets e inicialização de objetos
+    frameStart = SDL_GetTicks();
 
+    while (!stateStack.empty()
+           && !GetCurrentState().QuitRequested()
+           && !InputManager::GetInstance().QuitRequested()) {
+
+        // 1. O topo pediu pop: desempilha e retoma o estado anterior
+        if (GetCurrentState().PopRequested()) {
+            stateStack.pop();
+            if (!stateStack.empty()) {
+                GetCurrentState().Resume();
+            }
+        }
+
+        // 2. Há um novo estado aguardando: pausa o topo e empilha o novo
+        //    Processado no mesmo frame que o pop, se ambos ocorrerem juntos
+        if (storedState != nullptr) {
+            if (!stateStack.empty()) {
+                GetCurrentState().Pause();
+            }
+            stateStack.emplace(storedState);
+            storedState = nullptr;
+            stateStack.top()->Start();
+        }
+
+        // 3. Calcula delta time
+        float dt = CalculateDeltaTime();
+
+        // 4. Processa entradas
         InputManager::GetInstance().Update();
 
-        stateStack.top()->Update(dt);
-        stateStack.top()->Render();
+        // 5. Atualiza o estado do topo
+        SDL_RenderClear(renderer);
+        GetCurrentState().Update(dt);
+
+        // 6. Renderiza o estado do topo
+        GetCurrentState().Render();
         SDL_RenderPresent(renderer);
 
-        Uint32 frameTime = SDL_GetTicks() - startTime;
-        dt = frameTime / 1000.0f;
-
         SDL_Delay(16);
+    }
+
+    // Encerramento: esvazia a pilha e descarta storedState pendente
+    delete storedState;
+    storedState = nullptr;
+    while (!stateStack.empty()) {
+        stateStack.pop();
     }
 }
