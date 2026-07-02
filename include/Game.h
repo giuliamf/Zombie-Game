@@ -4,6 +4,7 @@
 #include <string>
 #include "SDL_include.h"
 #include "State.h"
+#include "StageState.h"
 
 class Game {
 public:
@@ -22,5 +23,5 @@ private:
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-    State* state;
+    StageState* state;
 };

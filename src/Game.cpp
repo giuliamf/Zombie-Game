@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "StageState.h"
 #include "InputManager.h"
 
 #include <iostream>
@@ -88,7 +89,7 @@ Game::Game(const std::string& title, int width, int height)
         std::exit(EXIT_FAILURE);
     }
 
-    state = new State();
+    state = new StageState();
 }
 
 // evitar vazamento de memoria
