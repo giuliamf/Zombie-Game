@@ -44,19 +44,19 @@ void Character::Start() {
 
     /** pegar referência segura do player
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetState().GetObjectPtr(&associated); */
+        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated); */
 
     
     // criar componente Gun
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetState().GetObjectPtr(&associated);
+        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated);
 
     Gun* gunComp = new Gun(*gunObject, characterPtr);
 
     gunObject->AddComponent(gunComp);
 
     // adicionar ao State e guardar referência
-    gun = Game::GetInstance().GetState().AddObject(gunObject);
+    gun = Game::GetInstance().GetCurrentState().AddObject(gunObject);
 }
 
 

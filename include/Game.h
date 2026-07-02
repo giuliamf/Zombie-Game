@@ -2,16 +2,18 @@
 #pragma once
 
 #include <string>
+#include <stack>
+#include <memory>
 #include "SDL_include.h"
 #include "State.h"
-#include "StageState.h"
 
 class Game {
 public:
     static Game& GetInstance();
 
     SDL_Renderer* GetRenderer();
-    State& GetState();
+    State& GetCurrentState();
+    void Push(State* state);
     void Run();
 
     ~Game();
@@ -23,5 +25,7 @@ private:
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-    StageState* state;
+
+    std::stack<std::unique_ptr<State>> stateStack;
+    State* storedState;
 };

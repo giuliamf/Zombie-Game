@@ -110,7 +110,7 @@ void Gun::Update(float dt) {
 
         bulletGO->AddComponent(bullet);
 
-        Game::GetInstance().GetState().AddObject(bulletGO);
+        Game::GetInstance().GetCurrentState().AddObject(bulletGO);
 
     }
 }

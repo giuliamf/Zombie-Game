@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "StageState.h"
 #include "InputManager.h"
 
 #include <iostream>
@@ -21,7 +20,7 @@ Game& Game::GetInstance() {
 
 // para evitar lixo de memoria
 Game::Game(const std::string& title, int width, int height)
-    : window(nullptr), renderer(nullptr), state(nullptr)
+    : window(nullptr), renderer(nullptr), storedState(nullptr)
 {
     if (instance != nullptr) {
         std::cerr << "Erro: Game já foi instanciado!" << std::endl;
@@ -89,12 +88,16 @@ Game::Game(const std::string& title, int width, int height)
         std::exit(EXIT_FAILURE);
     }
 
-    state = new StageState();
 }
 
 // evitar vazamento de memoria
 Game::~Game() {
-    delete state;   
+    // libera todos os estados da pilha
+    while (!stateStack.empty()) {
+        stateStack.pop();
+    }
+    delete storedState;
+
     Mix_CloseAudio();
     Mix_Quit();
 
@@ -110,25 +113,39 @@ SDL_Renderer* Game::GetRenderer() {
     return renderer;
 }
 
-State& Game::GetState() {
-    return *state;
+State& Game::GetCurrentState() {
+    return *stateStack.top();
+}
+
+// Armazena o estado para ser empilhado posteriormente — não empilha imediatamente
+void Game::Push(State* state) {
+    storedState = state;
 }
 
 // 30 fps
 void Game::Run() {
     Uint32 startTime = 0;
     float dt = 0.0f;
-    
-    state->Start();
-    while (!InputManager::GetInstance().QuitRequested()) {
+
+    // encerra imediatamente se nenhum estado foi fornecido via Push()
+    if (storedState == nullptr) {
+        return;
+    }
+
+    // move o estado fornecido via Push() para o topo da pilha antes de iniciar
+    stateStack.emplace(storedState);
+    storedState = nullptr;
+
+    stateStack.top()->Start();
+    while (!stateStack.empty() && !InputManager::GetInstance().QuitRequested()) {
         startTime = SDL_GetTicks();
 
         SDL_RenderClear(renderer);
 
         InputManager::GetInstance().Update();
 
-        state->Update(dt);
-        state->Render();
+        stateStack.top()->Update(dt);
+        stateStack.top()->Render();
         SDL_RenderPresent(renderer);
 
         Uint32 frameTime = SDL_GetTicks() - startTime;
