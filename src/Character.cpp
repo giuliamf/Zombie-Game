@@ -70,6 +70,12 @@ void Character::Update(float dt) {
     associated.box.pos.x += speed.x * dt;
     associated.box.pos.y += speed.y * dt;
 
+    // Limites do mapa
+    if (associated.box.pos.x < 640.0f)  associated.box.pos.x = 640.0f;
+    if (associated.box.pos.y < 512.0f)  associated.box.pos.y = 512.0f;
+    if (associated.box.pos.x > 1920.0f) associated.box.pos.x = 1920.0f;
+    if (associated.box.pos.y > 2048.0f) associated.box.pos.y = 2048.0f;
+
     // Verificar se morreu
     if (hp <= 0) {
         isDead = true;
