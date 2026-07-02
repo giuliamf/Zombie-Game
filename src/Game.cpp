@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "InputManager.h"
+#include "Resources.h"
 
 #include <iostream>
 
@@ -107,6 +108,7 @@ Game::~Game() {
     Mix_CloseAudio();
     Mix_Quit();
 
+    Resources::ClearFonts();
     TTF_Quit();
 
     IMG_Quit();
