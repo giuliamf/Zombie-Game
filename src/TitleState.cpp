@@ -81,9 +81,10 @@ void TitleState::Update(float dt) {
         return;
     }
 
-    // SPACE — inicia o jogo
+    // SPACE — inicia o jogo (retorna imediatamente para evitar Push repetido enquanto a tecla está pressionada)
     if (input.IsKeyDown(SDLK_SPACE)) {
         Game::GetInstance().Push(new StageState());
+        return;
     }
 
     // efeito piscante: alterna visibilidade a cada BLINK_INTERVAL segundos

@@ -129,6 +129,7 @@ State& Game::GetCurrentState() {
 
 // Armazena o estado para ser empilhado posteriormente — não empilha imediatamente
 void Game::Push(State* state) {
+    delete storedState;   // descartar estado anterior se ainda não foi processado
     storedState = state;
 }
 
@@ -177,6 +178,9 @@ void Game::Run() {
             storedState = nullptr;
             stateStack.top()->Start();
         }
+
+        // Se após pop+push a pilha ficou vazia, encerrar o loop
+        if (stateStack.empty()) break;
 
         // 3. Calcula delta time
         float dt = CalculateDeltaTime();
