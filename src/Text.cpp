@@ -54,6 +54,14 @@ void Text::Render() {
     SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, nullptr, &dst);
 }
 
+int Text::GetWidth() const {
+    return static_cast<int>(associated.box.size.x);
+}
+
+int Text::GetHeight() const {
+    return static_cast<int>(associated.box.size.y);
+}
+
 bool Text::Is(std::string type) const {
     return type == "Text";
 }

@@ -33,6 +33,9 @@ public:
     void SetFontFile(const std::string& fontFile);
     void SetFontSize(int fontSize);
 
+    int GetWidth() const;
+    int GetHeight() const;
+
 private:
     void RemakeTexture();
 
