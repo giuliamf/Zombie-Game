@@ -4,6 +4,7 @@
 #include "Vec2.h"
 #include "Timer.h"
 #include <queue>
+#include <memory>
 
 class Character : public Component {
 public:

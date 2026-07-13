@@ -1,41 +1,230 @@
-# Zombie Game
+<div align="center">
 
-Jogo de sobrevivência top-down desenvolvido em C++17 com SDL2.
+# 🧟 Zombie Game
 
-O jogador deve sobreviver a ondas crescentes de zumbis. Ao eliminar todas as ondas, vence. Ao morrer, perde. Os resultados levam a uma tela de fim de jogo com opção de recomeçar.
+### Jogo de sobrevivência top-down desenvolvido em C++17 com SDL2
 
----
+[![C++17](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
+[![SDL2](https://img.shields.io/badge/SDL-2.0-green.svg)](https://www.libsdl.org/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-lightgrey.svg)](https://github.com)
 
-## Sumário
+*Sobreviva a ondas crescentes de zumbis. Elimine todos para vencer. Morra e perca. Simples assim.*
 
-- [Pré-requisitos](#pré-requisitos)
-- [Como compilar](#como-compilar)
-- [Como executar](#como-executar)
-- [Controles](#controles)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Arquitetura](#arquitetura)
-- [Waves](#waves)
-- [Recursos](#recursos)
+[🎮 Como Jogar](#-como-executar) • [🛠️ Compilar](#-como-compilar) • [📖 Documentação](#-documentação-completa)
+
+</div>
 
 ---
 
-## Pré-requisitos
+## 📋 Sumário
 
-| Dependência | Versão mínima | Instalação (macOS) |
-|---|---|---|
-| Clang / GCC | C++17 | `xcode-select --install` |
-| SDL2 | 2.x | `brew install sdl2` |
-| SDL2_image | — | `brew install sdl2_image` |
-| SDL2_mixer | — | `brew install sdl2_mixer` |
-| SDL2_ttf | — | `brew install sdl2_ttf` |
-
-> **Nota:** o Homebrew pode instalar `sdl2-compat` (shim SDL3) em vez do SDL2 nativo em sistemas recentes. O jogo é compatível com ambos.
+- [🎯 Sobre o Jogo](#-sobre-o-jogo)
+- [🎮 COMO JOGAR (Executável Pronto)](#-como-jogar-executável-pronto)
+- [🎯 Controles](#-controles)
+- [🌊 Sistema de Waves](#-sistema-de-waves)
+- [📁 Estrutura do Projeto](#-estrutura-do-projeto)
+- [🏗️ Arquitetura](#️-arquitetura)
+- [🎨 Recursos](#-recursos)
+- [🛠️ Para Desenvolvedores](#️-para-desenvolvedores)
+- [📖 Documentação Completa](#-documentação-completa)
 
 ---
 
-## Como compilar
+## 🎯 Sobre o Jogo
 
-Não há Makefile — compilar manualmente com:
+Zombie Game é um shooter top-down onde você deve sobreviver a **5 ondas progressivamente mais difíceis** de zumbis. Use WASD para se mover e o mouse para atirar. Cada wave aumenta o número de inimigos e reduz o tempo entre spawns.
+
+**Objetivo:** Elimine todos os zumbis de todas as waves para vencer!
+
+---
+
+## 🎮 COMO JOGAR (Executável Pronto)
+
+> **✨ O jogo já está compilado e pronto para jogar! Não é necessário compilar nada.**
+
+### 🪟 Windows
+
+1. **Localize o executável:**
+   ```
+   build\bin\ZombieGame.exe
+   ```
+
+2. **Execute de uma das formas:**
+   
+   **Opção A - Duplo Clique (Mais Fácil):**
+   - Navegue até a pasta `build\bin\`
+   - Dê **duplo clique** em `ZombieGame.exe`
+   - O jogo iniciará automaticamente!
+
+   **Opção B - Terminal:**
+   ```cmd
+   cd build\bin
+   ZombieGame.exe
+   ```
+
+3. **Pronto!** O jogo deve abrir e você pode começar a jogar.
+
+### 🍎 macOS
+
+1. **Localize o executável:**
+   ```
+   build/bin/ZombieGame
+   ```
+
+2. **Execute via terminal:**
+   ```bash
+   cd build/bin
+   ./ZombieGame
+   ```
+
+3. **Pronto!** O jogo deve abrir e você pode começar a jogar.
+
+### ⚠️ Importante
+
+- O executável **DEVE** estar na pasta `build/bin/` junto com a pasta `Resources/`
+- A estrutura correta é:
+  ```
+  build/
+  └── bin/
+      ├── ZombieGame.exe (ou ZombieGame no macOS)
+      └── Resources/
+          ├── img/
+          ├── audio/
+          ├── font/
+          └── map/
+  ```
+- Se você mover o executável, mova também a pasta `Resources/` junto
+
+### 🐛 Problemas ao Executar?
+
+**Windows - "DLL não encontrada":**
+- Certifique-se de que `C:\msys64\mingw64\bin` está no PATH do sistema
+- Ou copie as DLLs necessárias para a pasta `build\bin\`:
+  - SDL2.dll
+  - SDL2_image.dll
+  - SDL2_mixer.dll
+  - SDL2_ttf.dll
+
+**macOS - "Não é possível abrir":**
+- Execute: `chmod +x build/bin/ZombieGame`
+- Ou vá em Preferências do Sistema → Segurança e permita a execução
+
+---
+
+## 💻 Pré-requisitos (Apenas para Compilar)
+
+> **📌 Nota:** Se você só quer jogar, pule esta seção! O executável já está pronto em `build/bin/`.
+
+Esta seção é apenas para quem deseja **recompilar** o jogo do zero.
+
+### 🪟 Windows
+
+| Ferramenta | Instalação |
+|------------|------------|
+| **MSYS2** | [Download](https://www.msys2.org/) |
+| **Dependências SDL2** | Abra o terminal MSYS2 MinGW 64-bit e execute: |
+
+```bash
+# Atualizar sistema
+pacman -Syu
+
+# Instalar compilador e ferramentas
+pacman -S mingw-w64-x86_64-gcc
+pacman -S mingw-w64-x86_64-cmake
+pacman -S mingw-w64-x86_64-make
+
+# Instalar SDL2 e extensões
+pacman -S mingw-w64-x86_64-SDL2
+pacman -S mingw-w64-x86_64-SDL2_image
+pacman -S mingw-w64-x86_64-SDL2_mixer
+pacman -S mingw-w64-x86_64-SDL2_ttf
+```
+
+**Configurar PATH:**
+Adicione `C:\msys64\mingw64\bin` às variáveis de ambiente do Windows.
+
+### 🍎 macOS
+
+```bash
+# Instalar Xcode Command Line Tools
+xcode-select --install
+
+# Instalar Homebrew (se ainda não tiver)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Instalar dependências
+brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf
+```
+
+---
+
+## 🛠️ Para Desenvolvedores
+
+> **📌 Esta seção é apenas para quem deseja recompilar o código-fonte.**
+> **Se você só quer jogar, use o executável em `build/bin/` conforme explicado acima.**
+
+### 🛠️ Como Compilar
+
+#### 🎯 Método 1: Scripts Automáticos (Recomendado)
+
+#### 🪟 Windows
+
+```cmd
+build_windows.bat
+```
+
+#### 🍎 macOS
+
+```bash
+chmod +x build_macos.sh
+./build_macos.sh
+```
+
+---
+
+### 🔧 Método 2: CMake Manual (Multiplataforma)
+
+#### 🪟 Windows
+
+```cmd
+# Criar diretório de build
+mkdir build
+cd build
+
+# Configurar projeto
+cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+
+# Compilar
+cmake --build . --config Release
+
+# Executar
+cd bin
+ZombieGame.exe
+```
+
+#### 🍎 macOS
+
+```bash
+# Criar diretório de build
+mkdir build
+cd build
+
+# Configurar projeto
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+# Compilar
+cmake --build . --config Release
+
+# Executar
+cd bin
+./ZombieGame
+```
+
+---
+
+### ⚙️ Método 3: Compilação Direta (Apenas macOS)
+
+Para compilar sem CMake, execute todos os comandos abaixo **em uma única linha** ou use `\` para quebrar linhas:
 
 ```bash
 clang++ -std=c++17 \
@@ -43,240 +232,343 @@ clang++ -std=c++17 \
   -I/opt/homebrew/include \
   -I/opt/homebrew/include/SDL2 \
   $(sdl2-config --cflags) \
-  src/GameData.cpp src/Resources.cpp src/Text.cpp \
-  src/State.cpp src/EndState.cpp src/TitleState.cpp \
-  src/StageState.cpp src/Game.cpp \
-  src/GameObject.cpp src/Component.cpp \
-  src/Sprite.cpp src/SpriteRenderer.cpp \
-  src/Animation.cpp src/Animator.cpp \
-  src/Camera.cpp src/Character.cpp \
-  src/Collider.cpp src/Collision.cpp \
+  src/GameData.cpp \
+  src/Resources.cpp \
+  src/Text.cpp \
+  src/State.cpp \
+  src/EndState.cpp \
+  src/TitleState.cpp \
+  src/StageState.cpp \
+  src/Game.cpp \
+  src/GameObject.cpp \
+  src/Component.cpp \
+  src/Sprite.cpp \
+  src/SpriteRenderer.cpp \
+  src/Animation.cpp \
+  src/Animator.cpp \
+  src/Camera.cpp \
+  src/Character.cpp \
+  src/Collider.cpp \
+  src/Collision.cpp \
   src/PlayerController.cpp \
-  src/TileMap.cpp src/TileSet.cpp \
-  src/Timer.cpp src/Vec2.cpp src/Rect.cpp \
-  src/Music.cpp src/InputManager.cpp \
-  src/Bullet.cpp src/Gun.cpp \
-  src/Zombie.cpp src/AIController.cpp \
-  src/WaveSpawner.cpp src/main.cpp \
+  src/TileMap.cpp \
+  src/TileSet.cpp \
+  src/Timer.cpp \
+  src/Vec2.cpp \
+  src/Rect.cpp \
+  src/Music.cpp \
+  src/InputManager.cpp \
+  src/Bullet.cpp \
+  src/Gun.cpp \
+  src/Zombie.cpp \
+  src/AIController.cpp \
+  src/WaveSpawner.cpp \
+  src/main.cpp \
   $(sdl2-config --libs) \
   -L/opt/homebrew/lib \
-  -lSDL2_image -lSDL2_mixer -lSDL2_ttf \
+  -lSDL2_image \
+  -lSDL2_mixer \
+  -lSDL2_ttf \
   -o jogo
 ```
 
+Depois execute:
+
+```bash
+./jogo
+```
+
+> **Nota:** Este método requer que você execute o jogo a partir da raiz do projeto para que os caminhos de `Resources/` funcionem.
+
 ---
 
-## Como executar
+#### 🎮 Como Executar Após Compilar
 
-Execute a partir da raiz do repositório (necessário para os caminhos de `Resources/` funcionarem):
+**Após Compilação com CMake:**
 
+🪟 **Windows:**
+```cmd
+cd build\bin
+ZombieGame.exe
+```
+
+🍎 **macOS:**
+```bash
+cd build/bin
+./ZombieGame
+```
+
+**Após Compilação Direta (macOS):**
 ```bash
 ./jogo
 ```
 
 ---
 
-## Controles
+## 🎯 Controles
 
-### Tela de título
+### 🎬 Tela de Título
 
 | Tecla | Ação |
-|---|---|
+|-------|------|
 | `SPACE` | Iniciar partida |
-| `ESC` | Encerrar o jogo |
-| `X` (janela) | Encerrar o jogo |
+| `ESC` | Sair do jogo |
 
-### Durante o jogo (StageState)
+### 🎮 Durante o Jogo
 
-| Tecla | Ação |
-|---|---|
+| Controle | Ação |
+|----------|------|
 | `W` | Mover para cima |
-| `S` | Mover para baixo |
 | `A` | Mover para a esquerda |
+| `S` | Mover para baixo |
 | `D` | Mover para a direita |
-| Botão esquerdo do mouse | Atirar |
-| `ESC` | Voltar à tela de título |
+| `Mouse` | Mirar |
+| `Botão Esquerdo` | Atirar |
+| `ESC` | Voltar ao menu |
 
-### Tela de fim de jogo (EndState)
+### 🏁 Tela de Fim de Jogo
 
 | Tecla | Ação |
-|---|---|
-| `SPACE` | Jogar novamente (volta à tela de título) |
-| `ESC` | Encerrar o jogo |
-| `X` (janela) | Encerrar o jogo |
+|-------|------|
+| `SPACE` | Jogar novamente |
+| `ESC` | Sair do jogo |
 
 ---
 
-## Estrutura do projeto
+## 📁 Estrutura do Projeto
 
 ```
 Zombie-Game/
-├── include/              # Headers (.h)
-│   ├── State.h           # Classe base abstrata — State Stack
-│   ├── Game.h            # Singleton do jogo, gerencia State Stack
-│   ├── TitleState.h      # Tela de título
-│   ├── StageState.h      # Estado de gameplay
-│   ├── EndState.h        # Tela de fim de jogo
-│   ├── GameData.h        # Dados compartilhados entre estados
-│   ├── Text.h            # Componente de texto (SDL_ttf)
-│   ├── Resources.h       # Cache de fontes TTF
-│   ├── GameObject.h      # Entidade do jogo
-│   ├── Component.h       # Componente base
-│   ├── Character.h       # Componente do jogador
-│   ├── Zombie.h          # Componente de zumbi
-│   ├── AIController.h    # IA de perseguição
-│   ├── WaveSpawner.h     # Gerenciador de ondas
-│   ├── Gun.h             # Componente da arma
-│   ├── Bullet.h          # Componente de projétil
-│   ├── Sprite.h          # Textura + frame
-│   ├── SpriteRenderer.h  # Componente de renderização
-│   ├── Animator.h        # Animação por frames
-│   ├── Animation.h       # Definição de animação
-│   ├── Collider.h        # Caixa de colisão
-│   ├── Collision.h       # Detecção AABB
-│   ├── TileMap.h         # Mapa de tiles
-│   ├── TileSet.h         # Conjunto de tiles
-│   ├── Camera.h          # Câmera 2D
-│   ├── InputManager.h    # Entrada de teclado e mouse
-│   ├── Music.h           # Música de fundo
-│   ├── Timer.h           # Temporizador
-│   ├── Vec2.h            # Vetor 2D
-│   ├── Rect.h            # Retângulo
-│   └── SDL_include.h     # Centraliza includes SDL
 │
-├── src/                  # Implementações (.cpp)
-│   └── ...               # Espelho de include/
+├── 📂 include/                    # Headers (.h)
+│   ├── State.h                    # Sistema de estados
+│   ├── Game.h                     # Gerenciador principal
+│   ├── TitleState.h               # Tela de título
+│   ├── StageState.h               # Gameplay
+│   ├── EndState.h                 # Tela de fim
+│   ├── GameObject.h               # Entidades do jogo
+│   ├── Component.h                # Sistema de componentes
+│   ├── Character.h                # Jogador
+│   ├── Zombie.h                   # Inimigos
+│   ├── Gun.h                      # Arma
+│   ├── Bullet.h                   # Projéteis
+│   ├── WaveSpawner.h              # Sistema de ondas
+│   └── ...                        # Outros componentes
 │
-├── Resources/
-│   ├── img/              # Sprites e fundos
-│   │   ├── background.png
-│   │   ├── Player.png
-│   │   ├── Enemy.png
-│   │   ├── Gun.png
-│   │   ├── Bullet.png
-│   │   ├── Tileset.png
-│   │   ├── Title.png
-│   │   ├── Win.png
-│   │   └── Lose.png
-│   ├── audio/            # Efeitos e músicas
-│   │   ├── BGM.wav
-│   │   ├── endStateWin.ogg
-│   │   ├── endStateLose.ogg
-│   │   ├── PumpAction.mp3
-│   │   └── ...
-│   ├── font/
-│   │   └── font.ttf      # Fonte usada nos textos
-│   └── map/
-│       └── map.txt       # Mapa de tiles
+├── 📂 src/                        # Implementações (.cpp)
+│   └── ...                        # Arquivos correspondentes
 │
-└── README.md
+├── 📂 Resources/                  # Assets do jogo
+│   ├── 🖼️ img/                   # Sprites e imagens
+│   │   ├── Player.png             # Spritesheet do jogador (3×4)
+│   │   ├── Enemy.png              # Spritesheet do zumbi (3×2)
+│   │   ├── Gun.png                # Spritesheet da arma (3×2)
+│   │   ├── Bullet.png             # Projétil
+│   │   ├── Title.png              # Tela de título
+│   │   ├── Win.png                # Tela de vitória
+│   │   └── Lose.png               # Tela de derrota
+│   │
+│   ├── 🔊 audio/                 # Sons e músicas
+│   │   ├── BGM.wav                # Música de fundo
+│   │   ├── PumpAction.mp3         # Som de tiro
+│   │   ├── endStateWin.ogg        # Música de vitória
+│   │   └── endStateLose.ogg       # Música de derrota
+│   │
+│   ├── 🔤 font/                  # Fontes
+│   │   └── font.ttf               # Fonte principal
+│   │
+│   └── 🗺️ map/                   # Mapas
+│       └── map.txt                # Layout do mapa
+│
+├── 📂 build/                      # Arquivos de compilação (gerado)
+│   └── bin/                       # Executável final
+│       ├── ZombieGame.exe         # Windows
+│       ├── ZombieGame             # macOS
+│       └── Resources/             # Cópia dos assets
+│
+├── 📄 CMakeLists.txt              # Configuração CMake
+├── 📄 build_windows.bat           # Script de build Windows
+├── 📄 build_macos.sh              # Script de build macOS
+├── 📄 README.md                   # Este arquivo
+├── 📄 BUILD.md                    # Documentação detalhada
+├── 📄 WINDOWS_BUILD.md            # Guia específico Windows
+└── 📄 GUIA_RAPIDO.md              # Guia de início rápido
 ```
 
 ---
 
-## Arquitetura
+## 🏗️ Arquitetura
 
-### State Stack
+### 🔄 State Stack Pattern
 
-O jogo utiliza uma pilha de estados (`std::stack<std::unique_ptr<State>>`), gerenciada por `Game`. Cada estado implementa a interface abstrata `State`:
-
-```
-State  (abstrata)
-├── TitleState   — tela inicial
-├── StageState   — partida em andamento
-└── EndState     — resultado (vitória ou derrota)
-```
-
-**Ciclo de vida por estado:**
-
-| Método | Quando é chamado |
-|---|---|
-| `Start()` | Uma vez, quando o estado vai ao topo da pilha |
-| `Update(dt)` | Todo frame, enquanto for o topo |
-| `Render()` | Todo frame, após `Update` |
-| `Pause()` | Quando outro estado é empilhado sobre este |
-| `Resume()` | Quando o estado acima é desempilhado |
-| `LoadAssets()` | Chamado pelo construtor de cada estado |
-
-**Transições:**
+O jogo utiliza uma **pilha de estados** para gerenciar diferentes telas:
 
 ```
-main
- └─ game.Push(new TitleState())
-     └─ game.Run()
-         │
-         TitleState
-         ├── ESC          → quitRequested = true     → encerra
-         └── SPACE        → Push(new StageState())   → empilha
-                              │
-                              StageState
-                              ├── ESC          → popRequested = true   → volta a TitleState
-                              ├── player morreu → Push(new EndState()) → empilha
-                              └── all waves done → Push(new EndState()) → empilha
-                                                     │
-                                                     EndState
-                                                     ├── ESC   → quitRequested = true
-                                                     └── SPACE → popRequested = true
-                                                                  Push(new TitleState())
+┌─────────────────────────────────────┐
+│          State (abstrata)           │
+└─────────────────────────────────────┘
+                  ▲
+                  │
+        ┌─────────┼─────────┐
+        │         │         │
+   TitleState  StageState  EndState
+   (Menu)      (Gameplay)  (Resultado)
 ```
 
-### Sistema de componentes
+**Fluxo de Estados:**
 
-`GameObject` é um contêiner de `Component`. Cada comportamento é um componente separado:
+```
+Início
+  │
+  ├─► TitleState (Menu Principal)
+  │     │
+  │     ├─ SPACE ──► StageState (Jogo)
+  │     │              │
+  │     │              ├─ Player Morreu ──► EndState (Derrota)
+  │     │              │                      │
+  │     │              └─ Waves Completas ──► EndState (Vitória)
+  │     │                                      │
+  │     └─────────────────────────────────────┘
+  │                    SPACE (Jogar Novamente)
+  │
+  └─ ESC ──► Sair
+```
+
+### 🧩 Sistema de Componentes
+
+Cada `GameObject` é composto por múltiplos `Component`s:
 
 ```
 GameObject
-├── SpriteRenderer   → renderiza sprite com câmera
-├── Animator         → anima por sequência de frames
-├── Collider         → caixa de colisão AABB
-├── Character        → movimento, HP, morte do jogador
-├── PlayerController → lê input e aciona Character
-├── Gun              → aponta para o mouse, dispara Bullets
-├── Zombie           → comportamento de zumbi
-├── AIController     → perseguição ao jogador
-├── WaveSpawner      → spawna zumbis em ondas
-└── Text             → renderiza texto via SDL_ttf
+├── SpriteRenderer    → Renderiza sprite
+├── Animator          → Anima frames
+├── Collider          → Detecta colisões
+├── Character         → Lógica do jogador
+├── PlayerController  → Controla input
+├── Gun               → Gerencia arma
+├── Zombie            → Comportamento inimigo
+├── AIController      → IA de perseguição
+└── WaveSpawner       → Spawna ondas
 ```
 
-### GameData
+### 📊 Ciclo de Vida
 
-`GameData::playerVictory` (estático) é o canal de comunicação entre `StageState` e `EndState`. É escrito pelo `StageState` e lido pelo construtor de `EndState` para decidir qual fundo e música exibir.
+Cada componente implementa:
 
----
-
-## Waves
-
-| Wave | Zumbis | Intervalo de spawn |
-|---|---|---|
-| 1 | 5 | 1,0 s |
-| 2 | 10 | 0,7 s |
-| 3 | 15 | 0,5 s |
-| 4 | 20 | 0,4 s |
-| 5 | 30 | 0,3 s |
-
-Ao concluir todas as 5 waves, `StageState` detecta `WaveSpawner::IsWaveComplete()` e transiciona para `EndState` com `playerVictory = true`.
+| Método | Descrição |
+|--------|-----------|
+| `Start()` | Inicialização (chamado uma vez) |
+| `Update(dt)` | Atualização lógica (todo frame) |
+| `Render()` | Renderização (todo frame) |
+| `NotifyCollision()` | Resposta a colisões |
 
 ---
 
-## Recursos
+## 🌊 Sistema de Waves
+
+O jogo possui **5 ondas progressivas** de dificuldade crescente:
+
+| 🌊 Wave | 🧟 Zumbis | ⏱️ Intervalo | 💀 Dificuldade |
+|---------|-----------|--------------|----------------|
+| **1** | 5 | 1.0s | ⭐ Fácil |
+| **2** | 10 | 0.7s | ⭐⭐ Médio |
+| **3** | 15 | 0.5s | ⭐⭐⭐ Difícil |
+| **4** | 20 | 0.4s | ⭐⭐⭐⭐ Muito Difícil |
+| **5** | 30 | 0.3s | ⭐⭐⭐⭐⭐ Extremo |
+
+**Mecânica:**
+- Cada wave deve ser completamente eliminada antes da próxima começar
+- O intervalo entre spawns diminui a cada wave
+- Sobreviva a todas as 5 waves para vencer!
+
+---
+
+## 🎨 Recursos
+
+### 🖼️ Sprites
+
+| Asset | Descrição | Dimensões |
+|-------|-----------|-----------|
+| `Player.png` | Spritesheet do jogador | 3×4 frames |
+| `Enemy.png` | Spritesheet do zumbi | 3×2 frames |
+| `Gun.png` | Spritesheet da arma | 3×2 frames |
+| `Bullet.png` | Projétil | Single frame |
+| `Tileset.png` | Tiles do mapa | 64×64 px |
+| `Title.png` | Tela de título | Full screen |
+| `Win.png` | Tela de vitória | Full screen |
+| `Lose.png` | Tela de derrota | Full screen |
+
+### 🔊 Áudio
+
+| Asset | Tipo | Uso |
+|-------|------|-----|
+| `BGM.wav` | Música | Loop durante gameplay |
+| `PumpAction.mp3` | SFX | Som de disparo |
+| `endStateWin.ogg` | Música | Tela de vitória |
+| `endStateLose.ogg` | Música | Tela de derrota |
+| `Hit0.wav`, `Hit1.wav` | SFX | Sons de impacto |
+| `Dead.wav` | SFX | Morte do jogador |
+
+### 🔤 Fontes
 
 | Asset | Uso |
-|---|---|
-| `img/background.png` | Fundo do mapa de jogo |
-| `img/Player.png` | Spritesheet do jogador (3×4 frames) |
-| `img/Enemy.png` | Spritesheet do zumbi (3×2 frames) |
-| `img/Gun.png` | Spritesheet da arma (3×2 frames) |
-| `img/Bullet.png` | Projétil |
-| `img/Tileset.png` | Tiles do mapa (64×64 px) |
-| `img/Title.png` | Fundo da tela de título |
-| `img/Win.png` | Fundo da tela de vitória |
-| `img/Lose.png` | Fundo da tela de derrota |
-| `audio/BGM.wav` | Música do gameplay |
-| `audio/endStateWin.ogg` | Música de vitória |
-| `audio/endStateLose.ogg` | Música de derrota |
-| `font/font.ttf` | Fonte TrueType para textos na tela |
-| `map/map.txt` | Arquivo de mapa (índices de tiles) |
+|-------|-----|
+| `font.ttf` | Textos e UI |
 
 ---
 
-*Giulia Moura Ferreira — 200018795 - Universidade de Brasília - Introdução ao Desenvolvimeto de Jogos*
+## 📖 Documentação Completa
+
+Para informações mais detalhadas, consulte:
+
+- 📘 **[BUILD.md](BUILD.md)** - Guia completo de compilação multiplataforma
+- 📗 **[WINDOWS_BUILD.md](WINDOWS_BUILD.md)** - Guia específico para Windows
+- 📙 **[GUIA_RAPIDO.md](GUIA_RAPIDO.md)** - Início rápido e troubleshooting
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Linguagem:** C++17
+- **Biblioteca Gráfica:** SDL2
+- **Extensões SDL:** SDL2_image, SDL2_mixer, SDL2_ttf
+- **Build System:** CMake 3.15+
+- **Compiladores:** GCC, Clang, MinGW-w64
+
+---
+
+## 📝 Notas de Desenvolvimento
+
+### Compatibilidade
+
+- ✅ Windows 10/11 (via MSYS2/MinGW)
+- ✅ macOS (Intel e Apple Silicon)
+- ✅ SDL2 e SDL3-compat
+
+### Requisitos de Sistema
+
+- **CPU:** Dual-core 2.0 GHz ou superior
+- **RAM:** 512 MB
+- **GPU:** Suporte a OpenGL 2.0
+- **Espaço:** ~50 MB
+
+---
+
+<div align="center">
+
+## 👥 Créditos
+
+**Desenvolvido por:** Giulia Moura Ferreira  
+**Matrícula:** 200018795  
+**Instituição:** Universidade de Brasília  
+**Disciplina:** Introdução ao Desenvolvimento de Jogos
+
+---
+
+### 🎮 Divirta-se jogando!
+
+Se encontrar bugs ou tiver sugestões, sinta-se à vontade para contribuir.
+
+**[⬆ Voltar ao topo](#-zombie-game)**
+
+</div>
