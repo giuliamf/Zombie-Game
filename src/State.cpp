@@ -1,173 +1,114 @@
 #include "State.h"
-#include "SpriteRenderer.h"
-#include "Zombie.h"
-#include "Animator.h"
-#include "Animation.h"
+
 #include "Camera.h"
-#include "Character.h" 
-#include "PlayerController.h"
-#include "TileMap.h"
-#include "TileSet.h"
+#include "Character.h"
+#include "Collider.h"
+#include "Collision.h"
 
 #include <SDL2/SDL.h>
-
-#include <iostream>
 #include <algorithm>
 
-// construtor
 State::State()
-    : quitRequested(false),
-      mapTileSet(nullptr),
+    : popRequested(false),
+      quitRequested(false),
       started(false)
 {
-    LoadAssets();
-
-    // BACKGROUND
-    GameObject* bg = new GameObject();
-    bg->box.pos.x = 0;
-    bg->box.pos.y = 0;
-
-    bg->AddComponent(
-        new SpriteRenderer(
-            *bg,
-            "Resources/img/background.png"
-        )
-    );
-
-
-    // ENEMIES - Criar múltiplos zombies
-    GameObject* enemy1 = CreateZombie(1800, 1300);  // Direita
-    GameObject* enemy2 = CreateZombie(1280, 900);   // Acima
-    GameObject* enemy3 = CreateZombie(800, 1300);   // Esquerda
-    GameObject* enemy4 = CreateZombie(1500, 1600);  // Abaixo-direita
-    GameObject* enemy5 = CreateZombie(1000, 1000);  // Diagonal superior-esquerda
-
-    // AQUI ENTRA O MAPA
-
-    mapTileSet = std::make_unique<TileSet>(
-        64, 64,
-        "Resources/img/Tileset.png"
-    );
-
-    GameObject* tileMapObject = new GameObject();
-    tileMapObject->box.pos.x = 0;
-    tileMapObject->box.pos.y = 0;
-
-    tileMapObject->AddComponent(
-        new TileMap(
-            *tileMapObject,
-            "Resources/map/map.txt",
-            mapTileSet.get()
-        )
-    );
-
-    // CRIANDO O PLAYER
-    GameObject* player = new GameObject();
-
-    player->box.pos.x = 1280;
-    player->box.pos.y = 1300;
-
-    player->box.size.x = 72;
-    player->box.size.y = 72;
-
-    player->AddComponent(
-        new SpriteRenderer(
-            *player,
-            "Resources/img/Player.png",
-            3, 4
-        )
-    );
-
-    Animator* playerAnimator = new Animator(*player);
-    playerAnimator->AddAnimation("walk", Animation(0, 2, 0.2f));
-
-    player->AddComponent(playerAnimator);
-    player->AddComponent(new Character(*player));
-    player->AddComponent(new PlayerController(*player));
-
-    playerAnimator->SetAnimation("walk");
-
-    AddObject(bg);
-    AddObject(tileMapObject);
-    AddObject(player);
-    AddObject(enemy1);
-    AddObject(enemy2);
-    AddObject(enemy3);
-    AddObject(enemy4);
-    AddObject(enemy5);
-    
 }
-
 
 State::~State() {
 }
 
-GameObject* State::CreateZombie(float x, float y) {
-    GameObject* zombie = new GameObject();
-    
-    zombie->box.pos.x = x;
-    zombie->box.pos.y = y;
-    zombie->box.size.x = 72;
-    zombie->box.size.y = 72;
-    
-    auto* sr = new SpriteRenderer(
-        *zombie,
-        "Resources/img/Enemy.png",
-        3, 2
-    );
-    zombie->AddComponent(sr);
-    
-    auto* animator = new Animator(*zombie);
-    animator->AddAnimation("walk", Animation(0, 2, 0.2f));
-    zombie->AddComponent(animator);
-    zombie->AddComponent(new Zombie(*zombie));
-    animator->SetAnimation("walk");
-    
-    return zombie;
+std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
+    std::shared_ptr<GameObject> ptr(go);
+
+    // Se o jogo já começou, adicionar à fila de pendentes
+    // para evitar modificar o array durante iteração
+    if (started) {
+        pendingObjects.push_back(ptr);
+    } else {
+        objectArray.push_back(ptr);
+    }
+
+    return std::weak_ptr<GameObject>(ptr);
 }
 
-
-void State::LoadAssets() {
-    music.Open("Resources/audio/BGM.wav");
-    music.Play();
+std::weak_ptr<GameObject> State::GetObjectPtr(GameObject* go) {
+    for (auto& obj : objectArray) {
+        if (obj.get() == go) {
+            return std::weak_ptr<GameObject>(obj);
+        }
+    }
+    return std::weak_ptr<GameObject>();
 }
 
-void State::Start() {
+std::vector<std::shared_ptr<GameObject>>& State::GetObjectArray() {
+    return objectArray;
+}
+
+bool State::QuitRequested() const {
+    return quitRequested;
+}
+
+bool State::PopRequested() const {
+    return popRequested;
+}
+
+// Chama Start() em todos os objetos já registrados e marca o estado como iniciado
+void State::StartArray() {
     for (size_t i = 0; i < objectArray.size(); i++) {
         objectArray[i]->Start();
     }
     started = true;
 }
 
-
-std::weak_ptr<GameObject> State::AddObject(GameObject* go) {
-
-    std::shared_ptr<GameObject> ptr(go);
-
-    objectArray.push_back(ptr);
-
-    /** se o jogo já começou, chamar start imediatamente
-    if (started) {
-        ptr->Start();
-    }
-    */
-    return std::weak_ptr<GameObject>(ptr);
-}
-
-void State::Update(float dt) {
-    //Camera::Update(dt);
-
+// Processa objetos pendentes, atualiza todos, detecta colisões e remove mortos
+void State::UpdateArray(float dt) {
     if (SDL_QuitRequested()) {
         quitRequested = true;
     }
 
+    // Processar objetos pendentes ANTES do Update
+    if (!pendingObjects.empty()) {
+        for (auto& obj : pendingObjects) {
+            obj->Start();
+            objectArray.push_back(obj);
+        }
+        pendingObjects.clear();
+    }
 
     for (auto& obj : objectArray) {
         obj->Update(dt);
     }
 
+    // Detecção de colisão
+    size_t arraySize = objectArray.size();
+    for (size_t i = 0; i < arraySize; i++) {
+        if (i >= objectArray.size()) break;
 
-    // remover objetos mortos
+        GameObject* obj1 = objectArray[i].get();
+        if (!obj1 || obj1->IsDead()) continue;
+
+        for (size_t j = i + 1; j < arraySize; j++) {
+            if (j >= objectArray.size()) break;
+
+            GameObject* obj2 = objectArray[j].get();
+            if (!obj2 || obj2->IsDead()) continue;
+
+            Collider* c1 = (Collider*) obj1->GetComponent("Collider");
+            Collider* c2 = (Collider*) obj2->GetComponent("Collider");
+
+            if (c1 && c2) {
+                if (Collision::IsColliding(c1->box, c2->box)) {
+                    if (!obj1->IsDead() && !obj2->IsDead()) {
+                        obj1->NotifyCollision(*obj2);
+                        obj2->NotifyCollision(*obj1);
+                    }
+                }
+            }
+        }
+    }
+
+    // Remover objetos mortos
     objectArray.erase(
         std::remove_if(
             objectArray.begin(),
@@ -179,47 +120,22 @@ void State::Update(float dt) {
         objectArray.end()
     );
 
-
-    // buscar o player (Character)
+    // Centralizar câmera no player (Character)
     for (auto& obj : objectArray) {
         for (auto comp : obj->GetComponents()) {
-
             Character* character = dynamic_cast<Character*>(comp);
-
             if (character != nullptr) {
-
-                // centralizar câmera no player
                 Camera::pos.x = obj->box.pos.x - 600;
                 Camera::pos.y = obj->box.pos.y - 450;
-
                 break;
             }
         }
-}
+    }
 }
 
-void State::Render() {
+// Renderiza todos os objetos do array
+void State::RenderArray() {
     for (auto& obj : objectArray) {
         obj->Render();
     }
-}
-
-bool State::QuitRequested() {
-    return quitRequested;
-}
-
-std::weak_ptr<GameObject> State::GetObjectPtr(GameObject* go) {
-
-    for (auto& obj : objectArray) {
-
-        if (obj.get() == go) {
-            return std::weak_ptr<GameObject>(obj);
-        }
-    }
-
-    return std::weak_ptr<GameObject>();
-}
-
-std::vector<std::shared_ptr<GameObject>>& State::GetObjectArray() {
-    return objectArray;
 }

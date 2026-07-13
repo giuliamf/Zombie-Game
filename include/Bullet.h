@@ -11,6 +11,8 @@ public:
     void Start() override;
     void Update(float dt) override;
     void Render() override;
+    void NotifyCollision(GameObject& other) override;
+    bool Is(std::string type) const override;
 
 private:
     Vec2 speedVec;       // direção e velocidade da bala
