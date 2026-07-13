@@ -556,19 +556,10 @@ Para informações mais detalhadas, consulte:
 
 <div align="center">
 
-## 👥 Créditos
-
-**Desenvolvido por:** Giulia Moura Ferreira  
+**Aluna:** Giulia Moura Ferreira  
 **Matrícula:** 200018795  
 **Instituição:** Universidade de Brasília  
 **Disciplina:** Introdução ao Desenvolvimento de Jogos
 
 ---
 
-### 🎮 Divirta-se jogando!
-
-Se encontrar bugs ou tiver sugestões, sinta-se à vontade para contribuir.
-
-**[⬆ Voltar ao topo](#-zombie-game)**
-
-</div>
