@@ -5,6 +5,9 @@
 .vscode/
 .idea/
 
+# Cache
+CMakeCache.txt
+
 # Compiled Object files
 *.slo
 *.lo
@@ -35,11 +38,6 @@
 *.la
 *.a
 *.lib
-
-# Executables
-*.exe
-*.out
-*.app
 
 # debug information files
 *.dwo

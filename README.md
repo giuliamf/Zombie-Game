@@ -25,8 +25,6 @@
 - [📁 Estrutura do Projeto](#-estrutura-do-projeto)
 - [🏗️ Arquitetura](#️-arquitetura)
 - [🎨 Recursos](#-recursos)
-- [🛠️ Para Desenvolvedores](#️-para-desenvolvedores)
-
 ---
 
 ## 🎯 Sobre o Jogo
@@ -545,9 +543,11 @@ O jogo possui **5 ondas progressivas** de dificuldade crescente:
 
 <div align="center">
 
-**Aluna:** Giulia Moura Ferreira  
-**Matrícula:** 200018795  
-**Instituição:** Universidade de Brasília  
+## 📚 Informações Acadêmicas
+
+**Aluna:** Giulia Moura Ferreira
+**Matrícula:** 200018795
+**Instituição:** Universidade de Brasília
 **Disciplina:** Introdução ao Desenvolvimento de Jogos
 
 ---
