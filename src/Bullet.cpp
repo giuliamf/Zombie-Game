@@ -1,13 +1,11 @@
 #include "Bullet.h"
-#include "Collider.h"
+#include "GameObject.h"
 #include "Collision.h"
 #include "Game.h"
-#include "GameObject.h"
 #include "State.h"
 #include "Zombie.h"
 
 #include <cmath>
-#include <iostream>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -26,7 +24,6 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, float maxDistan
 }
 
 void Bullet::Start() {
-    associated.AddComponent(new Collider(associated, Vec2{0.3, 0.3}));
 }
 
 void Bullet::Update(float dt) {
@@ -44,23 +41,31 @@ void Bullet::Update(float dt) {
         associated.RequestDelete();
         return;
     }
-}
 
-void Bullet::Render() {
-}
+    auto& objects = Game::GetInstance().GetState().GetObjectArray();
 
-void Bullet::NotifyCollision(GameObject& other) {
-    // Se a bala já foi marcada para deletar, não processar colisões
-    if (associated.IsDead()) return;
-    
-    // Verificar se o outro objeto está morto
-    if (other.IsDead()) return;
+    for (auto& obj : objects) {
 
-    if (other.GetComponent("Zombie")) {
-        associated.RequestDelete();
+        // ignora si mesma
+        if (obj.get() == &associated) continue;
+
+        for (auto comp : obj->GetComponents()) {
+
+            Zombie* zombie = dynamic_cast<Zombie*>(comp);
+
+            if (zombie != nullptr) {
+
+                if (Collision::IsColliding(associated.box, obj->box)) {
+
+                    zombie->NotifyHit();
+                    associated.RequestDelete(); // mata bala
+
+                    return;
+                }
+            }
+        }
     }
 }
 
-bool Bullet::Is(std::string type) const {
-    return type == "Bullet";
+void Bullet::Render() {
 }

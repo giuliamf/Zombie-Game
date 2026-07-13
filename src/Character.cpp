@@ -1,28 +1,19 @@
 #include "Character.h"
-#include "Animator.h"
-#include "Collider.h"
-#include "Game.h"
 #include "GameObject.h"
 #include "Gun.h"
 #include "SpriteRenderer.h"
+#include "Game.h"
 #include "State.h"
-
-#include <iostream>
-
 
 Character::Character(GameObject& associated)
     : Component(associated),
       speed(0, 0),
-      linearSpeed(200), // velocidade aumentada para melhor jogabilidade
-      hp(100),
-      damageCooldown(1.0),
-      isDead(false)
+      linearSpeed(800), // trocar para 300, pois 800 é para testar o mapa
+      hp(100)
 {
 }
 
 void Character::Start() {
-
-    associated.AddComponent(new Collider(associated));
 
     GameObject* gunObject = new GameObject();
 
@@ -44,67 +35,26 @@ void Character::Start() {
 
     /** pegar referência segura do player
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated); */
+        Game::GetInstance().GetState().GetObjectPtr(&associated); */
 
     
     // criar componente Gun
     std::weak_ptr<GameObject> characterPtr =
-        Game::GetInstance().GetCurrentState().GetObjectPtr(&associated);
+        Game::GetInstance().GetState().GetObjectPtr(&associated);
 
     Gun* gunComp = new Gun(*gunObject, characterPtr);
 
     gunObject->AddComponent(gunComp);
 
     // adicionar ao State e guardar referência
-    gun = Game::GetInstance().GetCurrentState().AddObject(gunObject);
+    gun = Game::GetInstance().GetState().AddObject(gunObject);
 }
 
 
 void Character::Update(float dt) {
-    // Se já está morto, não faz mais nada
-    if (isDead) return;
 
-    damageTimer.Update(dt);
-
-    // Movimentação só acontece se estiver vivo
     associated.box.pos.x += speed.x * dt;
     associated.box.pos.y += speed.y * dt;
-
-    // Limites do mapa
-    if (associated.box.pos.x < 640.0f)  associated.box.pos.x = 640.0f;
-    if (associated.box.pos.y < 512.0f)  associated.box.pos.y = 512.0f;
-    if (associated.box.pos.x > 1920.0f) associated.box.pos.x = 1920.0f;
-    if (associated.box.pos.y > 2048.0f) associated.box.pos.y = 2048.0f;
-
-    // Verificar se morreu
-    if (hp <= 0) {
-        isDead = true;
-        
-        std::cout << "Player morreu!" << std::endl;
-        
-        // Parar animação e mostrar frame de morte
-        for (auto comp : associated.GetComponents()) {
-            // Parar Animator
-            Animator* anim = dynamic_cast<Animator*>(comp);
-            if (anim != nullptr) {
-                anim->Stop();
-            }
-            
-            // Mudar para frame de morte (frame 12)
-            SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
-            if (sr != nullptr) {
-                sr->sprite.SetFrame(12);
-            }
-        }
-        
-        // Deletar a arma
-        if (!gun.expired()) {
-            auto gunPtr = gun.lock();
-            if (gunPtr) {
-                gunPtr->RequestDelete();
-            }
-        }
-    }
 }
 
 void Character::Render() {
@@ -113,27 +63,4 @@ void Character::Render() {
 void Character::SetSpeed(Vec2 dir) {
     speed.x = dir.x * linearSpeed;
     speed.y = dir.y * linearSpeed;
-}
-
-void Character::NotifyCollision(GameObject& other) {
-    // Se o player já está morto, não processar colisões
-    if (isDead) return;
-    
-    // Verificar se o outro objeto está morto
-    if (other.IsDead()) return;
-
-    if (other.GetComponent("Zombie")) {
-
-        if (damageTimer.Get() > damageCooldown) {
-
-            hp--;
-            damageTimer.Restart();
-
-            std::cout << "Player tomou dano! HP: " << hp << std::endl;
-        }
-    }
-}
-
-bool Character::Is(std::string type) const {
-    return type == "Character";
 }

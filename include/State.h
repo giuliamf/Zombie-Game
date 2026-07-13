@@ -2,39 +2,37 @@
 
 #include <vector>
 #include <memory>
+#include "Music.h"
 #include "GameObject.h"
+#include "TileSet.h"
 
 class State {
 public:
     State();
-    virtual ~State();
+    ~State();
 
-    // Pure virtual lifecycle interface
-    virtual void LoadAssets() = 0;
-    virtual void Update(float dt) = 0;
-    virtual void Render() = 0;
-    virtual void Start() = 0;
-    virtual void Pause() = 0;
-    virtual void Resume() = 0;
+    void LoadAssets();
+    void Start();
+    void Update(float dt);
+    void Render();
 
-    // Concrete object-management helpers
-    virtual std::weak_ptr<GameObject> AddObject(GameObject* go);
+    bool QuitRequested();
+
+    std::weak_ptr<GameObject> AddObject(GameObject* go);
     std::weak_ptr<GameObject> GetObjectPtr(GameObject* go);
+
     std::vector<std::shared_ptr<GameObject>>& GetObjectArray();
 
-    // Array lifecycle helpers — call these from subclass Start/Update/Render
-    void StartArray();
-    void UpdateArray(float dt);
-    void RenderArray();
 
-    bool QuitRequested() const;
-    bool PopRequested() const;
-
-protected:
-    bool popRequested;
+private:
+    std::vector<std::shared_ptr<GameObject>> objectArray;
+    Music music;
     bool quitRequested;
+
+    std::unique_ptr<TileSet> mapTileSet;
+
     bool started;
 
-    std::vector<std::shared_ptr<GameObject>> objectArray;
-    std::vector<std::shared_ptr<GameObject>> pendingObjects;
+    // adicionar mais de um zumbi
+    GameObject*CreateZombie(float x, float y);
 };

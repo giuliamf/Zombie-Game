@@ -1,13 +1,11 @@
-#include "Bullet.h"
-#include "Camera.h"
-#include "Character.h"
-#include "Game.h"
-#include "GameObject.h"
 #include "Gun.h"
+#include "GameObject.h"
 #include "InputManager.h"
+#include "Camera.h"
 #include "SpriteRenderer.h"
+#include "Bullet.h"
+#include "Game.h"
 #include "State.h"
-
 #include <cmath>
 
 #ifndef M_PI
@@ -37,20 +35,12 @@ void Gun::Update(float dt) {
 
     // 1. pegar referência do player
     if (character.expired()) {
-        associated.RequestDelete();
         return;
     }
 
     auto characterPtr = character.lock();
 
     if (!characterPtr) {
-        return;
-    }
-    
-    // 2. Verificar se o player está morto
-    Character* charComp = (Character*)characterPtr->GetComponent("Character");
-    if (charComp && charComp->IsDead()) {
-        // Player morreu, não atualizar mais
         return;
     }
 
