@@ -546,8 +546,11 @@ O jogo possui **5 ondas progressivas** de dificuldade crescente:
 ## 📚 Informações Acadêmicas
 
 **Aluna:** Giulia Moura Ferreira
+
 **Matrícula:** 200018795
+
 **Instituição:** Universidade de Brasília
+
 **Disciplina:** Introdução ao Desenvolvimento de Jogos
 
 ---
