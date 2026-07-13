@@ -26,7 +26,6 @@
 - [🏗️ Arquitetura](#️-arquitetura)
 - [🎨 Recursos](#-recursos)
 - [🛠️ Para Desenvolvedores](#️-para-desenvolvedores)
-- [📖 Documentação Completa](#-documentação-completa)
 
 ---
 
