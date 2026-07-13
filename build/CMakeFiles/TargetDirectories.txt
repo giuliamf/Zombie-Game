@@ -1,0 +1,7 @@
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/ZombieGame.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/edit_cache.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/rebuild_cache.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/list_install_components.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/install.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/install/local.dir
+C:/Users/giuli/Documents/GitHub/Pessoal/Zombie-Game/build/CMakeFiles/install/strip.dir

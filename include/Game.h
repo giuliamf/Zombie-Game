@@ -2,6 +2,8 @@
 #pragma once
 
 #include <string>
+#include <stack>
+#include <memory>
 #include "SDL_include.h"
 #include "State.h"
 
@@ -10,7 +12,8 @@ public:
     static Game& GetInstance();
 
     SDL_Renderer* GetRenderer();
-    State& GetState();
+    State& GetCurrentState();
+    void Push(State* state);
     void Run();
 
     ~Game();
@@ -18,9 +21,15 @@ public:
 private:
     Game(const std::string& title, int width, int height);
 
+    float CalculateDeltaTime();
+
     static Game* instance;
 
     SDL_Window* window;
     SDL_Renderer* renderer;
-    State* state;
+
+    std::stack<std::unique_ptr<State>> stateStack;
+    State* storedState;
+
+    Uint32 frameStart;
 };
