@@ -1,8 +1,10 @@
-#include "Zombie.h"
-#include "SpriteRenderer.h"
-#include "GameObject.h"
 #include "Animator.h"
+#include "Collider.h"
+#include "GameObject.h"
 #include "InputManager.h"
+#include "SpriteRenderer.h"
+#include "Zombie.h"
+
 
 #include <iostream>
 
@@ -53,38 +55,23 @@ void Zombie::Update(float dt) {
     }
 
 
-    deathTimer.Update(dt);
-
-    if (deathTimer.Get() > 3.0f) {
-        isDead = true;
-
-        std::cout << "Zombie morreu!" << std::endl;
-        if (sprite == nullptr) return;
-
-        for (auto comp : associated.GetComponents()) {
-
-            // parar Animator corretamente
-            Animator* anim = dynamic_cast<Animator*>(comp);
-            if (anim != nullptr) {
-                anim->Stop(); 
-            }
-
-            // mudar sprite
-            SpriteRenderer* sr = dynamic_cast<SpriteRenderer*>(comp);
-            if (sr != nullptr) {
-                sr->sprite.SetFrame(5);
-            }
-        }
-    }
 }
 
 void Zombie::Start() {
+    // Primeiro pegar o sprite dos componentes existentes
     for (auto component : associated.GetComponents()) {
         sprite = dynamic_cast<SpriteRenderer*>(component);
         if (sprite != nullptr) {
             break;
         }
     }
+
+    // Resetar o timer aqui para que o contador de vida comece a partir
+    // do momento em que o zombie é inicializado no jogo, não da construção
+    deathTimer.Restart();
+
+    // Depois adicionar o Collider
+    associated.AddComponent(new Collider(associated));
 }
 
 void Zombie::NotifyHit() {
@@ -108,4 +95,20 @@ void Zombie::NotifyHit() {
     
     // remover dps de 2 segundos
     deathTimer.Restart();
+}
+
+void Zombie::NotifyCollision(GameObject& other) {
+    // Se já está morto, não processar colisões
+    if (isDead) return;
+    
+    // Verificar se o outro objeto está morto também
+    if (other.IsDead()) return;
+
+    if (other.GetComponent("Bullet")) {
+        NotifyHit();
+    }
+}
+
+bool Zombie::Is(std::string type) const {
+    return type == "Zombie";
 }
