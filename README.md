@@ -517,16 +517,6 @@ O jogo possui **5 ondas progressivas** de dificuldade crescente:
 
 ---
 
-## 📖 Documentação Completa
-
-Para informações mais detalhadas, consulte:
-
-- 📘 **[BUILD.md](BUILD.md)** - Guia completo de compilação multiplataforma
-- 📗 **[WINDOWS_BUILD.md](WINDOWS_BUILD.md)** - Guia específico para Windows
-- 📙 **[GUIA_RAPIDO.md](GUIA_RAPIDO.md)** - Início rápido e troubleshooting
-
----
-
 ## 🛠️ Tecnologias Utilizadas
 
 - **Linguagem:** C++17
